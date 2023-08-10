@@ -38,7 +38,6 @@ function AllDescription ({ postId }: Props): JSX.Element {
         // setPost(response)
         setDescription(response)
         console.log(response)
-        toast.success('Success in creating the post')
       }).catch((error) => {
         console.log(error)
       })
