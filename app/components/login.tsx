@@ -47,20 +47,17 @@ function Login (): JSX.Element {
           replace('/dashboard')
           toast.success('Bienvenido.')
         })
-        .catch((err) => {
-          console.log(err)
+        .catch(() => {
           toast.error('Usuario no valido.')
         })
     } else {
       registerUserService(data)
         .then(async (r) => await r.json())
         .then((data) => {
-          console.log(data)
           setLogin(true)
           toast.success('Usuario creado correctamente.')
         })
-        .catch((err) => {
-          console.log(err)
+        .catch(() => {
           toast.error('Error al crear al usuario.')
         })
     }

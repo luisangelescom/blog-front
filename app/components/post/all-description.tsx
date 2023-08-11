@@ -25,7 +25,7 @@ function AllDescription ({ postId }: Props): JSX.Element {
   } = useForm<{ description: string }>()
 
   const allDescription = useCallback(() => {
-    console.log('Exec')
+    setDescription([])
     allDescriptionPost(postId).then(async (json) => {
       if (json.ok) { return await json.json() }
       if (json.status === 401) {
@@ -41,10 +41,12 @@ function AllDescription ({ postId }: Props): JSX.Element {
       }).catch((error) => {
         console.log(error)
       })
+  // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
     allDescription()
+    // eslint-disable-next-line
   }, [])
 
   const onSubmit: SubmitHandler<{ description: string }> = (data) => {

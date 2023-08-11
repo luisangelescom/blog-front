@@ -21,13 +21,9 @@ function ContainerDashboard (): JSX.Element {
 
   const getPost = useCallback(() => {
     if (token?.accessToken !== undefined && token?.accessToken !== null) {
-      console.log('Veces')
-
       allUserPosts(token?.accessToken.toString())
         .then(async (json) => await json.json())
         .then(data => {
-          console.log('data')
-          console.log(data)
           storePosts?.setPost(data)
         }).catch((r) => {})
     }
