@@ -35,9 +35,7 @@ function AllDescription ({ postId }: Props): JSX.Element {
       throw new Error('No se pudo crear')
     })
       .then((response) => {
-        // setPost(response)
         setDescription(response)
-        console.log(response)
       }).catch((error) => {
         console.log(error)
       })
