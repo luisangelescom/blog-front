@@ -30,10 +30,10 @@ function Login (): JSX.Element {
   const { replace } = useRouter()
 
   useEffect(() => {
-    if (token?.accessToken !== null && token?.accessToken !== undefined) {
+    if (token?.token?.accessToken !== null && token?.token?.accessToken !== undefined) {
       replace('/dashboard')
     }
-  }, [replace, token])
+  }, [replace, token?.token?.accessToken])
 
   const onSubmit: SubmitHandler<Input> = (data) => {
     if (login) {
@@ -43,7 +43,7 @@ function Login (): JSX.Element {
           throw new Error('Usario no valido')
         })
         .then((data) => {
-          token?.setToken(data.accessToken)
+          token?.setToken(data)
           replace('/dashboard')
           toast.success('Bienvenido.')
         })

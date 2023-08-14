@@ -6,14 +6,14 @@ import useStoreLogin from '../store/login'
 import useStore from './hooks/useHookStore'
 
 function ItemsHeaders (): JSX.Element {
-  const accessToken = useStore(useStoreLogin, (state) => state.accessToken)
+  const token = useStore(useStoreLogin, (state) => state.token)
 
   return (
     <>
       <Link href='/' title='Home'>
         <HomeIcon />
       </Link>
-      {accessToken === null || accessToken === undefined
+      {token?.accessToken === null || token?.accessToken === undefined
         ? (
           <Link href='/login' title='login'>
             <PersonIcon />

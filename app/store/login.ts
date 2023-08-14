@@ -1,15 +1,18 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { TokenData } from '../types/login'
 
 interface Login {
-  accessToken: String | null
-  setToken: (accessToken: String | null) => void
+  token: TokenData
+  setToken: (token: TokenData) => void
+  deleteToken: () => void
 }
 
 const useStoreLogin = create<Login >()(persist(
   (set, get) => ({
-    accessToken: null,
-    setToken: (accessToken: String | null) => set({ accessToken })
+    token: { accessToken: null, data: null },
+    setToken: (token: TokenData) => set({ token }),
+    deleteToken: () => set({ token: { accessToken: null, data: null } })
   }), {
     name: 'token'
   }

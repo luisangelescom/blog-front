@@ -1,14 +1,18 @@
 import { create } from 'zustand'
-import { PostType } from '../types/post'
+import { UserPostData } from '../types/user'
 
 interface Posts {
-  posts: PostType[]
-  setPost: (posts: PostType[]) => void
+  loading: boolean
+  posts: UserPostData | null
+  setPost: (posts: UserPostData | null) => void
+  setLoadingPost: (loading: boolean) => void
 }
 
 const useStorePost = create<Posts>()((set) => ({
-  posts: [],
-  setPost: (posts: PostType[]) => set({ posts })
+  loading: true,
+  posts: null,
+  setPost: (posts: UserPostData | null) => set({ posts, loading: false }),
+  setLoadingPost: (loading: boolean = false) => set(state => ({ ...state, loading }))
 }))
 
 export default useStorePost

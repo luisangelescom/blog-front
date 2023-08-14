@@ -5,46 +5,61 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect } from 'react'
 
 import useStorePost from '@/app/store/dashboard'
-import { allUserPosts } from '@/app/services/User/UserPostsService'
 
 import useStore from '../hooks/useHookStore'
 import AllPost from './all-post'
 import ModalPost from './modal-post'
 import useOpenModalPost from '@/app/store/openModalPost'
+import { fetchClient } from '@/app/utils/fetchClient'
+import { UserPostData } from '@/app/types/user'
+import LoadingPost from './loading-post'
 
 function ContainerDashboard (): JSX.Element {
   const token = useStore(useStoreLogin, (state) => state)
-  const storePosts = useStore(useStorePost, (state) => state)
+  const { posts, setPost, loading, setLoadingPost } = useStorePost()
   const { setOpen } = useOpenModalPost()
 
   const { replace } = useRouter()
 
   const getPost = useCallback(() => {
-    if (token?.accessToken !== undefined && token?.accessToken !== null) {
-      allUserPosts(token?.accessToken.toString())
-        .then(async (json) => await json.json())
-        .then(data => {
-          storePosts?.setPost(data)
-        }).catch((r) => {})
+    if (token?.token?.accessToken !== undefined && token?.token?.accessToken !== null) {
+      // allUserPosts(token?.token.accessToken.toString())
+      //   .then(async (json) => await json.json())
+      //   .then(data => {
+      //     console.log(data)
+
+      //     storePosts?.setPost(data)
+      //   }).catch((r) => {})
+      setLoadingPost(true)
+      fetchClient<UserPostData>(fetch('/api/user')).then(response => {
+        setPost(response)
+      }).catch(error => {
+        console.log(error)
+      }).finally(() => {
+        setLoadingPost(false)
+      })
     }
   // eslint-disable-next-line
-  }, [token?.accessToken])
+  }, [token?.token])
 
   useEffect(() => {
-    if (token?.accessToken === null) {
+    if (token?.token?.accessToken === null) {
       replace('/login')
     } else {
       getPost()
     }
+    return () => {
+      setPost(null)
+    }
   // eslint-disable-next-line
-  }, [token?.accessToken, replace])
+  }, [token?.token, replace])
 
   return (
     <main className='container mx-auto px-5 sm:px-0 flex flex-col gap-5'>
       <section className='flex justify-end items-center px-2 h-16'>
         <button
           onClick={() => {
-            token?.setToken(null)
+            token?.deleteToken()
           }} title='logout' type='button' className='border-2 border-white/70 rounded-md hover:border-red-400 hover:text-red-400 py-1 px-4'
         >Logout
         </button>
@@ -56,13 +71,15 @@ function ContainerDashboard (): JSX.Element {
         <button
           title='create post' type='button' className='border-2 border-white/70 rounded-md hover:border-blue-400 hover:text-blue-400 py-1 px-4' onClick={() => {
             setOpen()
-            replace('/login')
           }}
-        >Create Post
+        >
+          Create Post
         </button>
       </section>
       <section>
-        <AllPost data={storePosts?.posts} />
+        {loading
+          ? <LoadingPost />
+          : <AllPost data={posts?.posts} />}
       </section>
       <ModalPost />
     </main>

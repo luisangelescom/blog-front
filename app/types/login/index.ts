@@ -9,3 +9,12 @@ export interface RegisterType {
   lastname?: String
   username: String
 }
+
+export interface User {
+  id: number
+  surname: string
+}
+export interface TokenData {
+  accessToken: string | null
+  data: User | null
+}

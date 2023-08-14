@@ -4,13 +4,15 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 
-import { createPost, updatePost } from '@/app/services/Post/PostService'
+import { createPost } from '@/app/services/Post/PostService'
 import useOpenModalPost from '@/app/store/openModalPost'
 import useStoreLogin from '@/app/store/login'
 import { PostProps } from '@/app/types/post'
 import useStorePost from '@/app/store/dashboard'
 
 import useStore from '../hooks/useHookStore'
+import { fetchClient } from '@/app/utils/fetchClient'
+import { Post } from '@/app/types/user'
 
 function ModalPost (): JSX.Element {
   const { open, setClose, postId } = useOpenModalPost()
@@ -28,7 +30,7 @@ function ModalPost (): JSX.Element {
   useEffect(() => {
     reset()
     if (postId !== undefined) {
-      const post = posts.find(v => v.id === postId)
+      const post = posts?.posts?.find(v => v.id === postId)
       setValue('title', post?.title ?? '')
       setValue('article', post?.article ?? '')
     }
@@ -37,11 +39,11 @@ function ModalPost (): JSX.Element {
 
   const onSubmit: SubmitHandler<PostProps> = (data) => {
     if (postId === undefined) {
-      createPost(token?.accessToken?.toString() ?? '', data)
+      createPost(token?.token?.accessToken ?? '', data)
         .then(async (json) => {
           if (json.ok) { return await json.json() }
           if (json.status === 401) {
-            token?.setToken(null)
+            token?.deleteToken()
             toast.error('Se expiro tu token')
             setClose()
             throw new Error('Unauthorize')
@@ -58,41 +60,60 @@ function ModalPost (): JSX.Element {
           console.log('Error')
         })
     } else {
-      updatePost(token?.accessToken?.toString() ?? '', data, postId)
-        .then(async (json) => {
-          if (json.ok) { return await json.json() }
-          if (json.status === 401) {
-            token?.setToken(null)
-            toast.error('Se expiro tu token')
-            setClose()
-            throw new Error('Unauthorize')
-          }
-          toast.error('Hubo un error la crear tu post')
-          throw new Error('No se pudo crear')
-        })
-        .then((response) => {
-          setPost(response)
-          setClose()
-          toast.success('Success in creating the post')
-        })
-        .catch(() => {
-          console.log('Error')
-        })
+      // updatePost(token?.token?.accessToken ?? '', data, postId)
+      //   .then(async (json) => {
+      //     if (json.ok) { return await json.json() }
+      //     if (json.status === 401) {
+      //       token?.deleteToken()
+      //       toast.error('Se expiro tu token')
+      //       setClose()
+      //       throw new Error('Unauthorize')
+      //     }
+      //     toast.error('Hubo un error la crear tu post')
+      //     throw new Error('No se pudo crear')
+      //   })
+      //   .then((response) => {
+      //     setPost(response)
+      //     setClose()
+      //     toast.success('Success in creating the post')
+      //     revalidateTag('a')
+      //     revalidatePath('/')
+      //   })
+      //   .catch(() => {
+      //     console.log('Error')
+      //   })
+
+      fetchClient<Post[]>(fetch(`/api/post/${postId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data)
+      })).then(response => {
+        console.log('response')
+        console.log(response)
+
+        setPost((posts !== null) ? { ...posts, posts: response } : null)
+        setClose()
+        toast.success('Success in creating the post')
+        // revalidateTag('a')
+        // revalidatePath('/')
+      }).catch(error => {
+        console.log('error')
+        console.log(error)
+      })
     }
   }
 
   return (
     <main
       onClick={setClose}
-      className={`fixed top-0 bottom-0 right-0 left-0 border-2  w-full z-10 bg-black/70 drop-shadow-md ${
+      className={`fixed top-0 bottom-0 right-0 left-0 w-full z-10 bg-black/70 drop-shadow-md ${
         open ? 'translate-x-0' : 'translate-x-full'
-      } transition-all duration-300`}
+      } transition-all duration-500`}
     >
       <section
         onClick={(event) => {
           event.stopPropagation()
         }}
-        className='absolute border-2 top-0 bottom-0 max-w-[420px] bg-black right-0 w-full'
+        className='absolute top-0 bottom-0 max-w-[420px] bg-black right-0 w-full'
       >
 
         <form
@@ -115,7 +136,7 @@ function ModalPost (): JSX.Element {
             <div className='flex flex-col w-full gap-1'>
               <textarea
                 placeholder='Article'
-                className='text-black h-10 rounded-lg px-2 w-full max-h-[300px] min-h-[100px]'
+                className='text-black h-10 rounded-lg p-2 w-full max-h-[300px] min-h-[100px]'
                 {...register('article', { required: true })}
                 maxLength={255}
               />

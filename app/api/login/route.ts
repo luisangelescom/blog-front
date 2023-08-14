@@ -1,6 +1,9 @@
 // import { UrlBackend } from '@/app/public-env'
-import { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+
+import crypt from 'crypto-js'
+import { BASIC_ENCRYPT_SECRET } from '@/app/private-env'
 import { getToken } from '@/app/utils/fetcher'
 
 // import { UrlBackend } from '@/app/public-env'
@@ -20,13 +23,17 @@ export const config = {
 //   )
 // }
 
-export async function GET (req: NextRequest, res: Response): Promise<Response> {
-  return new Response(getToken())
+export async function POST (): Promise<Response> {
+  const token = getToken()
+  if (token !== null) {
+    return NextResponse.json({ message: getToken() }, { status: 200 })
+  } else {
+    return NextResponse.json({ message: getToken() }, { status: 400 })
+  }
 }
 
-export async function POST (req: NextRequest, res: Response): Promise<Response> {
+export async function GET (): Promise<Response> {
   const UrlBackend = 'https://blog-backend-i75f.onrender.com'
-  console.log(UrlBackend)
 
   const fet = await fetch(`${UrlBackend}/login`, {
     method: 'POST',
@@ -34,23 +41,24 @@ export async function POST (req: NextRequest, res: Response): Promise<Response> 
       surname: 'luis-42',
       password: '111111'
     }),
-    credentials: 'same-origin',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     }
   })
+
   const data = await fet.json()
   console.log(data)
 
   const now = new Date()
   const time = now.getTime()
-  const expireTime = time + 60000
+  const expireTime = time + 1200000
   now.setTime(expireTime)
   cookies().set({
-    name: 'test',
-    value: JSON.stringify(data),
+    name: 'token',
+    value: crypt.AES.encrypt(JSON.stringify(data), BASIC_ENCRYPT_SECRET).toString(),
     httpOnly: true,
+    sameSite: 'lax',
     // secure: true,
     expires: expireTime
   })
