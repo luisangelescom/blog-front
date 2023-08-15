@@ -15,7 +15,6 @@ function ItemsHeaders (): JSX.Element {
       .then((response) => {
         // setPost(response)
         setToken(response)
-        console.log(response)
       })
       .catch((error) => {
         console.log(error)
@@ -28,7 +27,6 @@ function ItemsHeaders (): JSX.Element {
   }, []);
 
   useEffect(() => {
-    console.log('Mounted')
     getToken()
   // eslint-disable-next-line
   }, [])

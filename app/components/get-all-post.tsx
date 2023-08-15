@@ -17,7 +17,6 @@ const Posts: FC<Props> = ({ data }) => {
   const [client, setClient] = useState<MqttClient | null>(null)
 
   const connectMqtt = useCallback(() => {
-    console.log('Connect')
     setClient(
       connect('wss://mqtt-dashboard.com/mqtt', { protocolVersion: 4, protocolId: 'MQTT', clientId: 'text-post', port: 8884, host: '/mqtt' })
     )
@@ -31,7 +30,6 @@ const Posts: FC<Props> = ({ data }) => {
   useEffect(() => {
     if (client !== null) {
       client.on('connect', () => {
-        console.log('Connect chaval')
         client.subscribe('post/update-create', (err) => {
           if (err == null) {
             client.publish('post/test', 'Hello mqtt')

@@ -25,8 +25,6 @@ function HeaderPost ({ postId }: Props): JSX.Element {
   const addLike = (): void => {
     addLikePost(token.accessToken ?? '', postId)
       .then(async (json) => {
-        console.log(json.status)
-
         if (json.ok) {
           return await json.json()
         }
@@ -39,9 +37,6 @@ function HeaderPost ({ postId }: Props): JSX.Element {
         throw new Error('No se pudo crear')
       })
       .then((response) => {
-        console.log('response')
-        console.log(response)
-
         toast.success('The like has been added to the post')
       })
       .catch(() => {

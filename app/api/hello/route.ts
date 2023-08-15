@@ -26,7 +26,6 @@ export async function GET (req: NextRequest, res: Response): Promise<Response> {
 
 export async function POST (req: NextRequest, res: Response): Promise<Response> {
   const UrlBackend = 'https://blog-backend-i75f.onrender.com'
-  console.log(UrlBackend)
 
   const fet = await fetch(`${UrlBackend}/login`, {
     method: 'POST',
@@ -41,7 +40,6 @@ export async function POST (req: NextRequest, res: Response): Promise<Response> 
     }
   })
   const data = await fet.json()
-  console.log(data)
 
   const now = new Date()
   const time = now.getTime()

@@ -61,9 +61,6 @@ function ModalPost (): JSX.Element {
         })
       )
         .then((response) => {
-          console.log('response')
-          console.log(response)
-
           setPost(posts !== null ? { ...posts, posts: response } : null)
           setClose()
           toast.success('Success in update the post')

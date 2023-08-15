@@ -75,8 +75,6 @@ export const fetcherLogin = async (fetcherCustom: Promise<Response>, headersCust
         expires: expireTime
       })
     } else {
-      console.log('Enter')
-
       cookies().delete('token')
     }
   } catch (error) {

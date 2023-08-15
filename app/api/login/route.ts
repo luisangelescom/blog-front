@@ -25,8 +25,6 @@ export async function GET (): Promise<Response> {
   const token = getDataToken()
 
   if (token !== null) {
-    console.log('token')
-    console.log(token)
     return NextResponse.json(JSON.parse(token), { status: 200 })
   } else {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })

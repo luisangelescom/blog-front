@@ -9,7 +9,6 @@ export const dynamic = 'force-dynamic'
 
 const Home: FC = async () => {
   // const data = await getPostUx()
-  console.log('Veces que me ejecuto client')
   return (
 
     <SWRProvider>
