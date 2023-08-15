@@ -1,22 +1,48 @@
 'use client'
 
 import Link from 'next/link'
-import { HomeIcon, PersonIcon } from './icons'
+import { HomeIcon, LoadingIcon, PersonIcon } from './icons'
 import useStoreLogin from '../store/login'
-import useStore from './hooks/useHookStore'
+import { useCallback, useEffect } from 'react'
+import { fetchClient } from '../utils/fetchClient'
+import { TokenData } from '../types/login'
 
 function ItemsHeaders (): JSX.Element {
-  const token = useStore(useStoreLogin, (state) => state.token)
+  const { token, preload, setPreload, setToken } = useStoreLogin()
+
+  const getToken = useCallback(() => {
+    fetchClient<TokenData>(fetch('/api/login')).then(response => {
+      // setPost(response)
+      setToken(response)
+      console.log(response)
+    }).catch((error) => {
+    }).finally(() => {
+      // setLoadingPost(false)
+      setPreload(false)
+    })
+  }, [])
+
+  useEffect(() => {
+    console.log('Mounted')
+    getToken()
+  }, [])
 
   return (
     <>
       <Link href='/' title='Home'>
         <HomeIcon />
       </Link>
-      {token?.accessToken === null || token?.accessToken === undefined
+
+      {token.accessToken === null || token.accessToken === undefined
         ? (
           <Link href='/login' title='login'>
-            <PersonIcon />
+
+            {preload
+
+              ? <div title='Loading User'>
+                <LoadingIcon />
+                </div>
+              : <PersonIcon />}
           </Link>
           )
         : (

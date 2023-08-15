@@ -6,60 +6,55 @@ import { useCallback, useEffect } from 'react'
 
 import useStorePost from '@/app/store/dashboard'
 
-import useStore from '../hooks/useHookStore'
 import AllPost from './all-post'
 import ModalPost from './modal-post'
 import useOpenModalPost from '@/app/store/openModalPost'
 import { fetchClient } from '@/app/utils/fetchClient'
 import { UserPostData } from '@/app/types/user'
 import LoadingPost from './loading-post'
+import { toast } from 'react-toastify'
 
 function ContainerDashboard (): JSX.Element {
-  const token = useStore(useStoreLogin, (state) => state)
+  const { token, deleteToken, preload } = useStoreLogin()
   const { posts, setPost, loading, setLoadingPost } = useStorePost()
   const { setOpen } = useOpenModalPost()
 
   const { replace } = useRouter()
 
   const getPost = useCallback(() => {
-    if (token?.token?.accessToken !== undefined && token?.token?.accessToken !== null) {
-      // allUserPosts(token?.token.accessToken.toString())
-      //   .then(async (json) => await json.json())
-      //   .then(data => {
-      //     console.log(data)
-
-      //     storePosts?.setPost(data)
-      //   }).catch((r) => {})
+    if (token.accessToken !== undefined && token.accessToken !== null) {
       setLoadingPost(true)
       fetchClient<UserPostData>(fetch('/api/user')).then(response => {
         setPost(response)
-      }).catch(error => {
-        console.log(error)
+      }).catch((error: Error) => {
+        toast.error(error.message)
       }).finally(() => {
         setLoadingPost(false)
       })
     }
   // eslint-disable-next-line
-  }, [token?.token])
+  }, [token])
 
   useEffect(() => {
-    if (token?.token?.accessToken === null) {
-      replace('/login')
-    } else {
-      getPost()
+    if (!preload) {
+      if (token.accessToken === null) {
+        replace('/login')
+      } else {
+        getPost()
+      }
     }
     return () => {
       setPost(null)
     }
   // eslint-disable-next-line
-  }, [token?.token, replace])
+  }, [token, replace,preload])
 
   return (
     <main className='container mx-auto px-5 sm:px-0 flex flex-col gap-5'>
       <section className='flex justify-end items-center px-2 h-16'>
         <button
           onClick={() => {
-            token?.deleteToken()
+            deleteToken()
           }} title='logout' type='button' className='border-2 border-white/70 rounded-md hover:border-red-400 hover:text-red-400 py-1 px-4'
         >Logout
         </button>

@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
-import { loginService, registerUserService } from '../services/Login/LoginServices'
+import { registerUserService } from '../services/Login/LoginServices'
 import useStoreLogin from '../store/login'
 import { useRouter } from 'next/navigation'
-import useStore from './hooks/useHookStore'
+import { fetchClient } from '../utils/fetchClient'
+import { LoadingIcon } from './icons'
+import { TokenData } from '../types/login'
 
 interface Input {
   name?: String
@@ -17,7 +19,7 @@ interface Input {
 }
 
 function Login (): JSX.Element {
-  const token = useStore(useStoreLogin, (state) => state)
+  const { token, loading, setToken, setLoading, preload } = useStoreLogin()
 
   const {
     register,
@@ -30,26 +32,26 @@ function Login (): JSX.Element {
   const { replace } = useRouter()
 
   useEffect(() => {
-    if (token?.token?.accessToken !== null && token?.token?.accessToken !== undefined) {
+    if (token.accessToken !== null && token.accessToken !== undefined && !preload) {
       replace('/dashboard')
     }
-  }, [replace, token?.token?.accessToken])
+  }, [replace, token.accessToken, preload])
 
   const onSubmit: SubmitHandler<Input> = (data) => {
     if (login) {
-      loginService(data)
-        .then(async (r) => {
-          if (r.ok) { return await r.json() }
-          throw new Error('Usario no valido')
-        })
-        .then((data) => {
-          token?.setToken(data)
-          replace('/dashboard')
-          toast.success('Bienvenido.')
-        })
+      setLoading(true)
+      fetchClient<TokenData>(fetch('/api/login', {
+        method: 'POST',
+        body: JSON.stringify({ password: data.password, surname: data.username })
+      })).then(response => {
+        toast.success('Bienvenido.')
+        replace('/dashboard')
+        setToken(response)
+      })
         .catch(() => {
           toast.error('Usuario no valido.')
         })
+        .finally(() => { setLoading(false) })
     } else {
       registerUserService(data)
         .then(async (r) => await r.json())
@@ -107,6 +109,7 @@ function Login (): JSX.Element {
                   <input
                     type='text'
                     placeholder='Username'
+                    disabled={loading || preload}
                     className='text-black h-10 rounded-lg px-2 w-full'
                     {...register('username', { required: true })}
                     maxLength={50}
@@ -119,6 +122,7 @@ function Login (): JSX.Element {
                   <input
                     type='password'
                     placeholder='Password'
+                    disabled={loading || preload}
                     className='text-black h-10 rounded-lg px-2 w-full'
                     {...register('password', { required: true, minLength: 6 })}
                     maxLength={50}
@@ -133,9 +137,11 @@ function Login (): JSX.Element {
               </div>
               <div className='h-2/6 w-full flex justify-center items-center'>
                 <button
-                  type='submit'
-                  className='border-2 border-white/50 rounded-lg py-3 px-6 text-md hover:text-blue-500 '
+                  type={loading || preload ? 'button' : 'submit'}
+                  className={`flex gap-2 justify-center items-center border-2 border-white/50 rounded-lg py-3 px-6 text-md select-none ${loading || preload ? 'bg-gray/10 cursor-wait' : 'hover:text-blue-500  '}`}
+                  disabled={loading || preload}
                 >
+                  {loading && <LoadingIcon />}
                   Sing In
                 </button>
               </div>
