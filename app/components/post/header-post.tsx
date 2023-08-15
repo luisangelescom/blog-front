@@ -3,25 +3,35 @@
 import { PostProps } from '@/app/types/post'
 import { HeartIcon } from '../icons'
 import { addLikePost } from '@/app/services/User/UserPostsService'
-import useStore from '../hooks/useHookStore'
 import useStoreLogin from '@/app/store/login'
 import { toast } from 'react-toastify'
+import useSWR from 'swr'
+import { fetchSWR } from '@/app/utils/fetchClient'
+import Loading from '@/app/post/[id]/loading'
 
-interface Props extends PostProps {
+interface Props {
   postId: string
 }
 
-function HeaderPost ({ title, article, postId }: Props): JSX.Element {
-  const token = useStore(useStoreLogin, (state) => state)
+function HeaderPost ({ postId }: Props): JSX.Element {
+  const { token } = useStoreLogin()
+
+  const {
+    data,
+    isLoading,
+    isValidating
+  } = useSWR(`/api/post/${postId}`, fetchSWR<PostProps>)
 
   const addLike = (): void => {
-    addLikePost(token?.accessToken?.toString() ?? '', postId)
+    addLikePost(token.accessToken ?? '', postId)
       .then(async (json) => {
         console.log(json.status)
 
-        if (json.ok) { return await json.json() }
+        if (json.ok) {
+          return await json.json()
+        }
         if (json.status === 401) {
-          token?.setToken(null)
+          // token?.setToken(null)
           toast.error('Se expiro tu token')
           throw new Error('Unauthorize')
         }
@@ -39,21 +49,26 @@ function HeaderPost ({ title, article, postId }: Props): JSX.Element {
       })
   }
 
+  if (isLoading || isValidating) {
+    return <Loading />
+  }
+
   return (
     <div className='relative'>
-      {token?.accessToken !== null &&
+      {token?.accessToken !== null && (
         <div className='flex flex-col gap-2'>
           <button className='absolute top-0 right-0' onClick={addLike}>
             <HeartIcon />
           </button>
-        </div>}
+        </div>
+      )}
       <section className='w-full flex flex-col border-b-2 border-white/10'>
         <article className='w-full h-28 flex justify-start items-center'>
-          <span className='text-4xl text-blue-400 font-sans font-medium tracking-wider'>{title}</span>
+          <span className='text-4xl text-blue-400 font-sans font-medium tracking-wider'>{data?.title ?? ''}</span>
         </article>
 
         <article className='w-full h-28 flex justify-start items-center'>
-          <span className='text-2xl text-[#EEEEEE] font-sans font-medium tracking-wider'>{article}</span>
+          <span className='text-2xl text-[#EEEEEE] font-sans font-medium tracking-wider'>{data?.article ?? ''}</span>
         </article>
       </section>
     </div>

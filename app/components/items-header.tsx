@@ -11,20 +11,26 @@ function ItemsHeaders (): JSX.Element {
   const { token, preload, setPreload, setToken } = useStoreLogin()
 
   const getToken = useCallback(() => {
-    fetchClient<TokenData>(fetch('/api/login')).then(response => {
-      // setPost(response)
-      setToken(response)
-      console.log(response)
-    }).catch((error) => {
-    }).finally(() => {
-      // setLoadingPost(false)
-      setPreload(false)
-    })
-  }, [])
+    fetchClient<TokenData>(fetch('/api/login'))
+      .then((response) => {
+        // setPost(response)
+        setToken(response)
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      .finally(() => {
+        // setLoadingPost(false)
+        setPreload()
+      })
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     console.log('Mounted')
     getToken()
+  // eslint-disable-next-line
   }, [])
 
   return (
@@ -36,13 +42,15 @@ function ItemsHeaders (): JSX.Element {
       {token.accessToken === null || token.accessToken === undefined
         ? (
           <Link href='/login' title='login'>
-
             {preload
-
-              ? <div title='Loading User'>
-                <LoadingIcon />
+              ? (
+                <div title='Loading User'>
+                  <LoadingIcon />
                 </div>
-              : <PersonIcon />}
+                )
+              : (
+                <PersonIcon />
+                )}
           </Link>
           )
         : (

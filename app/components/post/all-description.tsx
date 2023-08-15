@@ -2,20 +2,21 @@
 
 import useStoreLogin from '@/app/store/login'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { addCommentsPost, allDescriptionPost } from '@/app/services/User/UserPostsService'
 import { toast } from 'react-toastify'
 
-import useStore from '../hooks/useHookStore'
 import { useCallback, useEffect } from 'react'
 import useDescriptionPost from '@/app/store/description'
+import Loading from './loading-description'
+import { fetchClient } from '@/app/utils/fetchClient'
+import { PostDescriptionType } from '@/app/types/post'
 
 interface Props {
   postId: string
 }
 
 function AllDescription ({ postId }: Props): JSX.Element {
-  const token = useStore(useStoreLogin, (state) => state)
-  const { descriptions: description, setDescription } = useDescriptionPost()
+  const { token } = useStoreLogin()
+  const { descriptions: description, setDescription, isLoading, setLoading, preload } = useDescriptionPost()
 
   const {
     register,
@@ -25,21 +26,19 @@ function AllDescription ({ postId }: Props): JSX.Element {
   } = useForm<{ description: string }>()
 
   const allDescription = useCallback(() => {
-    allDescriptionPost(postId).then(async (json) => {
-      if (json.ok) { return await json.json() }
-      if (json.status === 401) {
-        token?.setToken(null)
-        throw new Error('Unauthorize')
-      }
-      throw new Error('No se pudo crear')
-    })
+    setLoading(true)
+    fetchClient<PostDescriptionType[]>(fetch(`/api/description/${postId}`))
       .then((response) => {
         setDescription(response)
-      }).catch((error) => {
+      }).catch(error => {
         console.log(error)
+        setDescription([])
       })
-  // eslint-disable-next-line
-  }, [])
+      .finally(() => {
+        setLoading(false)
+      })
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     allDescription()
@@ -48,29 +47,24 @@ function AllDescription ({ postId }: Props): JSX.Element {
       setDescription([])
     }
     // eslint-disable-next-line
-  }, [])
+  }, []);
 
   const onSubmit: SubmitHandler<{ description: string }> = (data) => {
-    addCommentsPost(token?.accessToken?.toString() ?? '', +postId, data.description)
-      .then(async (json) => {
-        if (json.ok) {
-          return await json.json()
-        }
-        if (json.status === 401) {
-          token?.setToken(null)
-          toast.error('Se expiro tu token')
-          throw new Error('Unauthorize')
-        }
-        toast.error('Hubo un error la crear tu post')
-        throw new Error('No se pudo crear')
-      }).then((data) => {
-        setDescription(data)
+    fetchClient<PostDescriptionType[]>(fetch(`/api/description/${postId}`, {
+      method: 'POST',
+      body: JSON.stringify({ description: data.description })
+    }))
+      .then((response) => {
+        setDescription(response)
         toast.success('Success in creating the description')
         reset()
+      }).catch((error: Error) => {
+        toast.error(error.message)
       })
-      .catch((e) => {
-        console.log(e)
-      })
+  }
+
+  if (isLoading || preload) {
+    return <Loading />
   }
 
   return (
@@ -86,13 +80,15 @@ function AllDescription ({ postId }: Props): JSX.Element {
               title={token?.accessToken === null ? 'You need to be a user to post' : 'Crear post'}
               placeholder='Description'
               className={`w-full max-h-[400px] min-h-[100px] p-2 bg-black/20 border-2 ${
-            token?.accessToken === null ? 'border-white/20 resize-none' : ''
-          } rounded-md`}
+                token?.accessToken === null ? 'border-white/20 resize-none' : ''
+              } rounded-md`}
               maxLength={255}
               disabled={token?.accessToken === null}
               {...register('description', { required: true })}
             />
-            {errors.description?.type === 'required' && <span className='text-sm text-red-500'>Description is required</span>}
+            {errors.description?.type === 'required' && (
+              <span className='text-sm text-red-500'>Description is required</span>
+            )}
           </div>
           <div
             className='flex justify-end w-full'
@@ -101,8 +97,8 @@ function AllDescription ({ postId }: Props): JSX.Element {
             <button
               type='submit'
               className={`border-2 border-white/50 ${
-              token?.accessToken !== null ? 'hover:border-blue-400 hover:text-blue-400' : ' opacity-50'
-            } py-1 px-4 rounded-md`}
+                token?.accessToken !== null ? 'hover:border-blue-400 hover:text-blue-400' : ' opacity-50'
+              } py-1 px-4 rounded-md`}
               disabled={token?.accessToken === null}
             >
               Save

@@ -13,10 +13,7 @@ interface Prop {
 export const GET = async (_req: NextRequest, context: Prop): Promise<Response> => {
   const id = context.params.id
   return await fetcher(fetch(`${UrlBackend}/posts/${id}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${getToken() ?? ''}`
-    }
+    method: 'GET'
   }))
 }
 

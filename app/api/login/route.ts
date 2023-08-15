@@ -6,9 +6,9 @@ import { UrlBackend } from '@/app/public-env'
 
 // import { UrlBackend } from '@/app/public-env'
 
-export const config = {
-  runtime: 'edge'
-}
+// export const config = {
+//   runtime: 'edge'
+// }
 
 // export async function GET (req: NextRequest): Promise<Response> {
 //   return new Response(

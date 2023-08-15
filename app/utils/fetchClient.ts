@@ -31,16 +31,13 @@ export const fetchClient = async <T>(fetcherCustom: Promise<Response>): Promise<
     }
     // If the status code is not in the range 200-299,
     // we still try to parse and throw it.
-    const json = await res.json()
-    console.log('json')
-    console.log({ json, status })
     if (res.ok) {
-      return { ...json }
+      return await res.json()
     }
 
     if (status === 400) {
       message = 'Bad Request'
-      cause = json
+      cause = await res.json()
     }
     if (status === 401) {
       if (window !== null && window !== undefined) {
@@ -50,12 +47,12 @@ export const fetchClient = async <T>(fetcherCustom: Promise<Response>): Promise<
         }
       }
       message = 'Unauthorized'
-      cause = json
+      cause = await res.json()
     }
 
     if (status === 404) {
       message = 'Not Found'
-      cause = json
+      cause = await res.json()
     }
 
     throw new Error(message, {
