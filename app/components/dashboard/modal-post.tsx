@@ -4,19 +4,15 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 
-import { createPost } from '@/app/services/Post/PostService'
 import useOpenModalPost from '@/app/store/openModalPost'
-import useStoreLogin from '@/app/store/login'
 import { PostProps } from '@/app/types/post'
 import useStorePost from '@/app/store/dashboard'
 
-import useStore from '../hooks/useHookStore'
 import { fetchClient } from '@/app/utils/fetchClient'
 import { Post } from '@/app/types/user'
 
 function ModalPost (): JSX.Element {
   const { open, setClose, postId } = useOpenModalPost()
-  const token = useStore(useStoreLogin, (state) => state)
   const { setPost, posts } = useStorePost()
 
   const {
@@ -30,75 +26,55 @@ function ModalPost (): JSX.Element {
   useEffect(() => {
     reset()
     if (postId !== undefined) {
-      const post = posts?.posts?.find(v => v.id === postId)
+      const post = posts?.posts?.find((v) => v.id === postId)
       setValue('title', post?.title ?? '')
       setValue('article', post?.article ?? '')
     }
-  // eslint-disable-next-line
-  }, [postId, posts])
+    // eslint-disable-next-line
+  }, [postId, posts]);
 
   const onSubmit: SubmitHandler<PostProps> = (data) => {
     if (postId === undefined) {
-      createPost(token?.token?.accessToken ?? '', data)
-        .then(async (json) => {
-          if (json.ok) { return await json.json() }
-          if (json.status === 401) {
-            token?.deleteToken()
-            toast.error('Se expiro tu token')
-            setClose()
-            throw new Error('Unauthorize')
-          }
-          toast.error('Hubo un error la crear tu post')
-          throw new Error('No se pudo crear')
+      fetchClient<Post[]>(
+        fetch('/api/post', {
+          method: 'POST',
+          body: JSON.stringify(data)
         })
+      )
         .then((response) => {
-          setPost(response)
+          setPost(posts !== null ? { ...posts, posts: response } : null)
           setClose()
           toast.success('Success in creating the post')
+          // revalidateTag('a')
+          // revalidatePath('/')
         })
-        .catch(() => {
-          console.log('Error')
+        .catch((error) => {
+          console.log('error')
+          console.log(error)
+          toast.success('Error creating the post')
         })
     } else {
-      // updatePost(token?.token?.accessToken ?? '', data, postId)
-      //   .then(async (json) => {
-      //     if (json.ok) { return await json.json() }
-      //     if (json.status === 401) {
-      //       token?.deleteToken()
-      //       toast.error('Se expiro tu token')
-      //       setClose()
-      //       throw new Error('Unauthorize')
-      //     }
-      //     toast.error('Hubo un error la crear tu post')
-      //     throw new Error('No se pudo crear')
-      //   })
-      //   .then((response) => {
-      //     setPost(response)
-      //     setClose()
-      //     toast.success('Success in creating the post')
-      //     revalidateTag('a')
-      //     revalidatePath('/')
-      //   })
-      //   .catch(() => {
-      //     console.log('Error')
-      //   })
+      fetchClient<Post[]>(
+        fetch(`/api/post/${postId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(data)
+        })
+      )
+        .then((response) => {
+          console.log('response')
+          console.log(response)
 
-      fetchClient<Post[]>(fetch(`/api/post/${postId}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data)
-      })).then(response => {
-        console.log('response')
-        console.log(response)
-
-        setPost((posts !== null) ? { ...posts, posts: response } : null)
-        setClose()
-        toast.success('Success in creating the post')
-        // revalidateTag('a')
-        // revalidatePath('/')
-      }).catch(error => {
-        console.log('error')
-        console.log(error)
-      })
+          setPost(posts !== null ? { ...posts, posts: response } : null)
+          setClose()
+          toast.success('Success in update the post')
+          // revalidateTag('a')
+          // revalidatePath('/')
+        })
+        .catch((error) => {
+          console.log('error')
+          console.log(error)
+          toast.success('Error update the post')
+        })
     }
   }
 
@@ -115,13 +91,14 @@ function ModalPost (): JSX.Element {
         }}
         className='absolute top-0 bottom-0 max-w-[420px] bg-black right-0 w-full'
       >
-
         <form
           // eslint-disable-next-line
           onSubmit={handleSubmit(onSubmit)}
           className='h-full border-2 border-white/40 rounded-lg gap-5 w-full flex flex-col justify-center items-center p-6'
         >
-          <span className='text-2xl font-sans font-bold tracking-tight'>{postId === undefined ? 'Create Post' : 'Edit Post'}</span>
+          <span className='text-2xl font-sans font-bold tracking-tight'>
+            {postId === undefined ? 'Create Post' : 'Edit Post'}
+          </span>
           <div className='h-4/6 w-full flex flex-col gap-5 justify-center items-center'>
             <div className='flex flex-col w-full gap-1'>
               <input
