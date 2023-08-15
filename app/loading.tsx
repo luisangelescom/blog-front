@@ -8,7 +8,7 @@ export default function Loading (): JSX.Element {
       <article className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5 px-2 md:px-0'>
         {/* eslint-disable-next-line */}
         {[...Array(5).keys()].map((id) =>
-          <div key={id} className='border-2 flex flex-col border-white/20 bg-[#393E46] w-full h-[300px] rounded-lg p-4 hover:scale-95 transition-all duration-300'>
+          <div key={id} className='border-2 flex flex-col border-white/20 bg-[#393E46] w-full h-[300px] rounded-lg p-4'>
             <div className='w-full h-1/4'>
               <div className='animate-pulse h-5 bg-white/50 rounded' />
             </div>

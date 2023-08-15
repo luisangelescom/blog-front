@@ -107,7 +107,7 @@ function AllDescription ({ postId }: Props): JSX.Element {
         </form>
       </div>
       {description.map(({ id, description, user: { surname } }) => (
-        <div key={id} className='border-2 border-white/20 flex w-full rounded-md min-h-[100px] p-2'>
+        <div key={id} className='border-2 border-white/20 flex flex-col md:flex-row gap-7 md:gap-0 w-full rounded-md min-h-[100px] p-2'>
           <div className='w-[200px] flex flex-col'>
             <span className='text-sm font-mono'>Autor</span>
             <span className='px-2 font-sans font-semibold text-lg text-white/80'>{surname}</span>
