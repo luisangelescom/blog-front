@@ -1,11 +1,11 @@
-import './globals.css'
 import type { Metadata } from 'next'
+
 import { Inter, Roboto_Mono } from 'next/font/google'
-import { ToastContainer } from 'react-toastify'
 
 import ItemsHeaders from './components/items-header'
 
-import 'react-toastify/dist/ReactToastify.css'
+import './globals.css'
+import { Providers } from './provider'
 
 // const inter = Inter({ subsets: ['latin'] })
 
@@ -33,8 +33,11 @@ export default function RootLayout ({ children }: { children: React.ReactNode })
         <header className='sticky top-0 border-b-2 border-white/20 bg-black/50 z-10 drop-shadow-sm h-16 flex gap-8 items-center justify-end container mx-auto px-2 sm:px-0'>
           <ItemsHeaders />
         </header>
-        {children}
-        <ToastContainer
+        <Providers>
+          {children}
+        </Providers>
+
+        {/* <ToastContainer
           position='top-right'
           autoClose={2000}
           hideProgressBar={false}
@@ -45,7 +48,7 @@ export default function RootLayout ({ children }: { children: React.ReactNode })
           draggable
           pauseOnHover
           theme='colored'
-        />
+        /> */}
       </body>
     </html>
   )

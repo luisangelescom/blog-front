@@ -12,7 +12,7 @@ import useOpenModalPost from '@/app/store/openModalPost'
 import { fetchClient } from '@/app/utils/fetchClient'
 import { UserPostData } from '@/app/types/user'
 import LoadingPost from './loading-post'
-import { toast } from 'react-toastify'
+import { toast } from 'sonner'
 
 function ContainerDashboard (): JSX.Element {
   const { token, deleteToken, preload, setLoading, loading: isLoading } = useStoreLogin()
@@ -99,7 +99,7 @@ function ContainerDashboard (): JSX.Element {
           Create Post
         </button>
       </section>
-      <section>{loading||isLoading ? <LoadingPost /> : <AllPost data={posts?.posts} />}</section>
+      <section>{loading || isLoading ? <LoadingPost /> : <AllPost data={posts?.posts} />}</section>
       <ModalPost />
     </main>
   )

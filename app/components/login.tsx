@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
+import { toast } from 'sonner'
 
 import { registerUserService } from '../services/Login/LoginServices'
 import useStoreLogin from '../store/login'
@@ -217,7 +217,6 @@ function Login (): JSX.Element {
             </form>
           </>
           )}
-
     </main>
   )
 }

@@ -2,7 +2,7 @@
 
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEffect } from 'react'
-import { toast } from 'react-toastify'
+import { toast } from 'sonner'
 
 import useOpenModalPost from '@/app/store/openModalPost'
 import { PostProps } from '@/app/types/post'
