@@ -6,6 +6,10 @@ interface otherProps {
   headers?: HeadersInit
 }
 
+export const deleteCookie = (): void => {
+  cookies().delete('token')
+}
+
 export const getDataToken = (): string | null => {
   try {
     if (cookies().get('token') !== undefined) {

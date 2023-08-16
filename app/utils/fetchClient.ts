@@ -41,7 +41,6 @@ export const fetchClient = async <T>(fetcherCustom: Promise<Response>): Promise<
     }
     if (status === 401) {
       if (window !== null && window !== undefined) {
-        console.log(window.location.pathname)
         if (pathSensitive.includes(window.location.pathname)) {
           window.location.replace('/login')
         }

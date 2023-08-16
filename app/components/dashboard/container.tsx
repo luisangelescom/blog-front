@@ -15,25 +15,43 @@ import LoadingPost from './loading-post'
 import { toast } from 'react-toastify'
 
 function ContainerDashboard (): JSX.Element {
-  const { token, deleteToken, preload } = useStoreLogin()
+  const { token, deleteToken, preload, setLoading, loading: isLoading } = useStoreLogin()
   const { posts, setPost, loading, setLoadingPost } = useStorePost()
   const { setOpen } = useOpenModalPost()
 
   const { replace } = useRouter()
 
+  const deleteTokenServer = (): void => {
+    setLoading(true)
+    fetchClient(
+      fetch('/api/login', {
+        method: 'DELETE'
+      })
+    )
+      .then(() => {
+        deleteToken()
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
+
   const getPost = useCallback(() => {
     if (token.accessToken !== undefined && token.accessToken !== null) {
       setLoadingPost(true)
-      fetchClient<UserPostData>(fetch('/api/user')).then(response => {
-        setPost(response)
-      }).catch((error: Error) => {
-        toast.error(error.message)
-      }).finally(() => {
-        setLoadingPost(false)
-      })
+      fetchClient<UserPostData>(fetch('/api/user'))
+        .then((response) => {
+          setPost(response)
+        })
+        .catch((error: Error) => {
+          toast.error(error.message)
+        })
+        .finally(() => {
+          setLoadingPost(false)
+        })
     }
-  // eslint-disable-next-line
-  }, [token])
+    // eslint-disable-next-line
+  }, [token]);
 
   useEffect(() => {
     if (!preload) {
@@ -46,17 +64,23 @@ function ContainerDashboard (): JSX.Element {
     return () => {
       setPost(null)
     }
-  // eslint-disable-next-line
-  }, [token, replace,preload])
+    // eslint-disable-next-line
+  }, [token, replace, preload]);
 
   return (
     <main className='container mx-auto px-5 sm:px-0 flex flex-col gap-5'>
       <section className='flex justify-end items-center px-2 h-16'>
         <button
+          type='button'
+          aria-label='logout'
+          title='logout'
+          disabled={isLoading}
           onClick={() => {
-            deleteToken()
-          }} title='logout' type='button' className='border-2 border-white/70 rounded-md hover:border-red-400 hover:text-red-400 py-1 px-4'
-        >Logout
+            deleteTokenServer()
+          }}
+          className={`border-2 border-white/70 rounded-md ${isLoading ? '' : 'hover:border-red-400 hover:text-red-400'}  py-1 px-4`}
+        >
+          Logout
         </button>
       </section>
       <section className='w-full flex justify-center items-center h-28'>
@@ -64,18 +88,18 @@ function ContainerDashboard (): JSX.Element {
       </section>
       <section className='flex justify-end items-center px-2 h-12'>
         <button
-          title='create post' type='button' className='border-2 border-white/70 rounded-md hover:border-blue-400 hover:text-blue-400 py-1 px-4' onClick={() => {
+          title='create post'
+          type='button'
+          className={`border-2 border-white/70 rounded-md ${isLoading ? '' : 'hover:border-blue-400 hover:text-blue-400'} py-1 px-4`}
+          disabled={isLoading}
+          onClick={() => {
             setOpen()
           }}
         >
           Create Post
         </button>
       </section>
-      <section>
-        {loading
-          ? <LoadingPost />
-          : <AllPost data={posts?.posts} />}
-      </section>
+      <section>{loading||isLoading ? <LoadingPost /> : <AllPost data={posts?.posts} />}</section>
       <ModalPost />
     </main>
   )

@@ -1,7 +1,7 @@
 // import { UrlBackend } from '@/app/public-env'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { fetcherLogin, getDataToken } from '@/app/utils/fetcher'
+import { deleteCookie, fetcherLogin, getDataToken } from '@/app/utils/fetcher'
 import { UrlBackend } from '@/app/public-env'
 
 // import { UrlBackend } from '@/app/public-env'
@@ -114,4 +114,9 @@ export async function POST (req: NextRequest): Promise<Response> {
   //   console.log(data)
   //   return NextResponse.json(data)
   // }
+}
+
+export async function DELETE (): Promise<NextResponse> {
+  deleteCookie()
+  return NextResponse.json({})
 }

@@ -10,6 +10,7 @@ import useStorePost from '@/app/store/dashboard'
 
 import { fetchClient } from '@/app/utils/fetchClient'
 import { Post } from '@/app/types/user'
+import { CloseIcon } from '../icons'
 
 function ModalPost (): JSX.Element {
   const { open, setClose, postId } = useOpenModalPost()
@@ -82,7 +83,9 @@ function ModalPost (): JSX.Element {
         open ? 'translate-x-0' : 'translate-x-full'
       } transition-all duration-500`}
     >
-      <div>close</div>
+      <button type='button' title='close modal' aria-label='close' className='fixed z-10 right-5 top-5' onClick={setClose}>
+        <CloseIcon />
+      </button>
       <section
         onClick={(event) => {
           event.stopPropagation()

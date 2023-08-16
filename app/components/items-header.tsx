@@ -8,19 +8,17 @@ import { fetchClient } from '../utils/fetchClient'
 import { TokenData } from '../types/login'
 
 function ItemsHeaders (): JSX.Element {
-  const { token, preload, setPreload, setToken } = useStoreLogin()
+  const { token, preload, setPreload, setToken, loading } = useStoreLogin()
 
   const getToken = useCallback(() => {
     fetchClient<TokenData>(fetch('/api/login'))
       .then((response) => {
-        // setPost(response)
         setToken(response)
       })
       .catch((error) => {
         console.log(error)
       })
       .finally(() => {
-        // setLoadingPost(false)
         setPreload()
       })
     // eslint-disable-next-line
@@ -36,11 +34,10 @@ function ItemsHeaders (): JSX.Element {
       <Link href='/' title='Home'>
         <HomeIcon />
       </Link>
-
-      {token.accessToken === null || token.accessToken === undefined
+      {token.accessToken === null || token.accessToken === undefined || loading
         ? (
           <Link href='/login' title='login'>
-            {preload
+            {preload || loading
               ? (
                 <div title='Loading User'>
                   <LoadingIcon />
