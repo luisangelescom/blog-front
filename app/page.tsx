@@ -16,9 +16,6 @@ const Home: FC = async () => {
         <section className='w-full flex justify-center items-center h-24'>
           <span className='text-3xl font-semibold tracking-wider text-blue-300 font-sans'>What&apos;s New on the Blog</span>
         </section>
-        {/* <Suspense fallback={<LoadingPost />}>
-        <Posts data={data} />
-      </Suspense> */}
         <UXTest />
 
       </main>

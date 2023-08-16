@@ -82,6 +82,7 @@ function ModalPost (): JSX.Element {
         open ? 'translate-x-0' : 'translate-x-full'
       } transition-all duration-500`}
     >
+      <div>close</div>
       <section
         onClick={(event) => {
           event.stopPropagation()

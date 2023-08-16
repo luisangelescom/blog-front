@@ -1,10 +1,12 @@
 'use client'
 
 import useSWR from 'swr'
-import Loading from '../loading'
-import { PostType } from '../types/post'
 import Link from 'next/link'
+
 import { fetchSWR } from '../utils/fetchClient'
+import { PostType } from '../types/post'
+
+import Loading from './loading-home'
 
 function UXTest (): JSX.Element {
   const { data, isLoading, isValidating } = useSWR('/api/post', fetchSWR<PostType[]>, { suspense: true })
