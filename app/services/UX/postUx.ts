@@ -5,6 +5,9 @@ import { cookies } from 'next/headers'
 export async function getPostUx<T> (path: string): Promise<T> {
   const res = await fetch(`${UrlFrontend}/${path}`, { cache: 'force-cache' })
   if (!res.ok) {
+    if (res.status === 404) {
+      return [] as T
+    }
     // probar con throw y cachar con error boundary
     throw new Error('No se encontraron datos')
   }
@@ -18,12 +21,6 @@ export async function getPostUxWithCredential<T> (path: string): Promise<T> {
   //     resolve('ok')
   //   }, 2000)
   // })
-  // console.log('path')
-  // console.log(path)
-
-  // console.log(getToken())
-  // console.log(cookies().getAll())
-  // console.log('===========================')
   try {
     const res = await fetch(`${UrlBackend}/${path}`, {
       cache: 'force-cache',
@@ -34,9 +31,10 @@ export async function getPostUxWithCredential<T> (path: string): Promise<T> {
 
     if (!res.ok) {
       if (res.status === 401) {
-      // deleteCookie('token')
-
         console.log(cookies().getAll())
+      }
+      if (res.status === 400) {
+        return await res.json()
       }
 
       throw new Error('Unauthorize', { cause: await res.json() })

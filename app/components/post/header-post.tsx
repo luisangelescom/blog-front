@@ -5,25 +5,18 @@ import { HeartIcon } from '../icons'
 import { addLikePost } from '@/app/services/User/UserPostsService'
 import useStoreLogin from '@/app/store/login'
 import { toast } from 'sonner'
-import useSWR from 'swr'
-import { fetchSWR } from '@/app/utils/fetchClient'
-import Loading from '@/app/post/[id]/loading'
+import useStore from '../hooks/useHookStore'
 
 interface Props {
   postId: string
+  post: PostProps
 }
 
-function HeaderPost ({ postId }: Props): JSX.Element {
-  const { token } = useStoreLogin()
-
-  const {
-    data,
-    isLoading,
-    isValidating
-  } = useSWR(`/api/post/${postId}`, fetchSWR<PostProps>)
+function HeaderPost ({ postId, post }: Props): JSX.Element {
+  const token = useStore(useStoreLogin, (state) => state)
 
   const addLike = (): void => {
-    addLikePost(token.accessToken ?? '', postId)
+    addLikePost(token?.token.accessToken ?? '', postId)
       .then(async (json) => {
         if (json.ok) {
           return await json.json()
@@ -44,13 +37,9 @@ function HeaderPost ({ postId }: Props): JSX.Element {
       })
   }
 
-  if (isLoading || isValidating) {
-    return <Loading />
-  }
-
   return (
     <div className='relative'>
-      {token?.accessToken !== null && (
+      {token?.token.accessToken !== null && (
         <div className='flex flex-col gap-2'>
           <button className='absolute top-0 right-0' onClick={addLike}>
             <HeartIcon />
@@ -59,11 +48,11 @@ function HeaderPost ({ postId }: Props): JSX.Element {
       )}
       <section className='w-full flex flex-col border-b-2 border-white/10'>
         <article className='w-full h-28 flex justify-start items-center'>
-          <span className='text-4xl text-blue-400 font-sans font-medium tracking-wider'>{data?.title ?? ''}</span>
+          <span className='text-4xl text-blue-400 font-sans font-medium tracking-wider'>{post.title}</span>
         </article>
 
         <article className='w-full h-28 flex justify-start items-center'>
-          <span className='text-2xl text-[#EEEEEE] font-sans font-medium tracking-wider'>{data?.article ?? ''}</span>
+          <span className='text-2xl text-[#EEEEEE] font-sans font-medium tracking-wider'>{post.article}</span>
         </article>
       </section>
     </div>

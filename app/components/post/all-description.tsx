@@ -4,19 +4,23 @@ import useStoreLogin from '@/app/store/login'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { useCallback, useEffect } from 'react'
-import useDescriptionPost from '@/app/store/description'
-import Loading from './loading-description'
 import { fetchClient } from '@/app/utils/fetchClient'
 import { PostDescriptionType } from '@/app/types/post'
+import { useRouter } from 'next/navigation'
+import { actionRevalidatePostId } from '@/app/action-server/revalidate-server'
+import useStore from '../hooks/useHookStore'
+import { useState } from 'react'
 
 interface Props {
   postId: string
+  data: PostDescriptionType[]
 }
 
-function AllDescription ({ postId }: Props): JSX.Element {
-  const { token } = useStoreLogin()
-  const { descriptions: description, setDescription, isLoading, setLoading, preload } = useDescriptionPost()
+function AllDescription ({ postId, data }: Props): JSX.Element {
+  // const { token } = useStoreLogin()
+  const { refresh } = useRouter()
+  const token = useStore(useStoreLogin, (state) => state)
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     register,
@@ -25,46 +29,27 @@ function AllDescription ({ postId }: Props): JSX.Element {
     formState: { errors }
   } = useForm<{ description: string }>()
 
-  const allDescription = useCallback(() => {
-    setLoading(true)
-    fetchClient<PostDescriptionType[]>(fetch(`/api/description/${postId}`))
-      .then((response) => {
-        setDescription(response)
-      }).catch(error => {
-        console.log(error)
-        setDescription([])
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    allDescription()
-    return () => {
-      // ELiminar el estado
-      setDescription([])
-    }
-    // eslint-disable-next-line
-  }, []);
-
   const onSubmit: SubmitHandler<{ description: string }> = (data) => {
-    fetchClient<PostDescriptionType[]>(fetch(`/api/description/${postId}`, {
-      method: 'POST',
-      body: JSON.stringify({ description: data.description })
-    }))
-      .then((response) => {
-        setDescription(response)
+    setIsLoading(true)
+    fetchClient<PostDescriptionType[]>(
+      fetch(`/api/description/${postId}`, {
+        method: 'POST',
+        body: JSON.stringify({ description: data.description })
+      })
+    )
+      .then(() => {
+        // setDescription(response)
+        refresh()
+        actionRevalidatePostId()
         toast.success('Success in creating the description')
         reset()
-      }).catch((error: Error) => {
+      })
+      .catch((error: Error) => {
         toast.error(error.message)
       })
-  }
-
-  if (isLoading || preload) {
-    return <Loading />
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   return (
@@ -77,37 +62,36 @@ function AllDescription ({ postId }: Props): JSX.Element {
         >
           <div className='flex flex-col w-full gap-1'>
             <textarea
-              title={token?.accessToken === null ? 'You need to be a user to post' : 'Crear post'}
               placeholder='Description'
               className={`w-full max-h-[400px] min-h-[100px] p-2 bg-black/20 border-2 ${
-                token?.accessToken === null ? 'border-white/20 resize-none' : ''
+                token?.token.accessToken === null || isLoading ? 'border-white/20 resize-none' : ''
               } rounded-md`}
               maxLength={255}
-              disabled={token?.accessToken === null}
+              disabled={token?.token.accessToken === null || isLoading}
               {...register('description', { required: true })}
             />
             {errors.description?.type === 'required' && (
               <span className='text-sm text-red-500'>Description is required</span>
             )}
           </div>
-          <div
-            className='flex justify-end w-full'
-            title={token?.accessToken === null ? 'You need to be a user to post' : 'Guardar'}
-          >
+          <div className='flex justify-end w-full'>
             <button
               type='submit'
               className={`border-2 border-white/50 ${
-                token?.accessToken !== null ? 'hover:border-blue-400 hover:text-blue-400' : ' opacity-50'
+                 token?.token.accessToken === null || isLoading ? ' opacity-50' : 'hover:border-blue-400 hover:text-blue-400'
               } py-1 px-4 rounded-md`}
-              disabled={token?.accessToken === null}
+              disabled={token?.token.accessToken === null || isLoading}
             >
               Save
             </button>
           </div>
         </form>
       </div>
-      {description.map(({ id, description, user: { surname } }) => (
-        <div key={id} className='border-2 border-white/20 flex flex-col md:flex-row gap-7 md:gap-0 w-full rounded-md min-h-[100px] p-2'>
+      {data.map(({ id, description, user: { surname } }) => (
+        <div
+          key={id}
+          className='border-2 border-white/20 flex flex-col md:flex-row gap-7 md:gap-0 w-full rounded-md min-h-[100px] p-2'
+        >
           <div className='w-[200px] flex flex-col'>
             <span className='text-sm font-mono'>Autor</span>
             <span className='px-2 font-sans font-semibold text-lg text-white/80'>{surname}</span>
@@ -119,7 +103,7 @@ function AllDescription ({ postId }: Props): JSX.Element {
         </div>
       ))}
 
-      {description.length === 0 && (
+      {data.length === 0 && (
         <div className='h-[300px] flex justify-center items-center'>
           <span className='text-2xl text-white/90 font-sans font-bold tracking-wide'>
             No hay descripciones en este post
