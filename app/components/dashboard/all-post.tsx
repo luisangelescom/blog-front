@@ -31,7 +31,7 @@ function AllPost ({ data }: Props): JSX.Element {
               color='primary'
               variant='solid'
               size='sm'
-              className='absolute z-20 -top-5 -right-5 flex justify-center items-center w-12 h-10'
+              className='absolute z-20 -top-3 right-0 flex justify-center items-center w-12 h-10'
               onClick={(event) => {
                 event.stopPropagation()
                 setOpen(id)
