@@ -29,7 +29,7 @@ export default function RootLayout ({ children }: { children: React.ReactNode })
   return (
     <html lang='en'>
       <body className={`${inter.variable} ${robotoMono.variable}`}>
-        <header className='sticky top-0 border-b-2 border-white/20 bg-black/50 z-10 drop-shadow-sm h-16 flex gap-8 items-center justify-end container mx-auto px-2 sm:px-0'>
+        <header className='w-full sticky top-0 z-40 border-b-2 border-white/20'>
           {/* <ItemsHeaders /> */}
           <HeaderServer />
         </header>
