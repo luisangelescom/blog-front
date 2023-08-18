@@ -1,39 +1,43 @@
 'use client'
 
-import useSWR from 'swr'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
-import { fetchSWR } from '../utils/fetchClient'
 import { PostType } from '../types/post'
+import { Card, CardHeader, Image, CardFooter } from '@nextui-org/react'
 
-import Loading from './loading-home'
+interface Props {
+  data: PostType[]
+}
 
-function UXTest (): JSX.Element {
-  const { data, isLoading, isValidating } = useSWR('/api/post', fetchSWR<PostType[]>, { suspense: true })
-
-  if (isLoading || isValidating) {
-    return <Loading />
-  }
+function UXTest ({ data }: Props): JSX.Element {
+  const { push } = useRouter()
 
   return (
     <>
+
       <article className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5'>
         {data.map(({ id, title, article, user: { surname } }) => (
-          <Link
-            href={`/post/${id}`}
-            key={id}
-            className='border-2 flex flex-col border-white/20 bg-[#393E46] w-full h-[300px] rounded-lg p-4 hover:scale-95 transition-all duration-300'
+          <Card
+            key={id} isPressable onClick={() => {
+              push(`/post/${id}`)
+            }} isFooterBlurred className='w-full h-[300px]' radius='sm'
           >
-            <div className='w-full h-1/4'>
-              <span className='text-2xl text-center text-[#00ADB5]'>{title}</span>
-            </div>
-            <div className='w-full h-2/4'>
-              <span className='text-md text-[#EEEEEE]'>{article}</span>
-            </div>
-            <div className='w-full h-1/4 flex justify-end items-end'>
-              <span className='text-sm font-sans font-semibold text-[#EEEEEE] tracking-wider'>{surname}</span>
-            </div>
-          </Link>
+            <CardHeader className='absolute z-10 top-1 flex-col items-start w-full rounded-sm'>
+              <p title={title} className='text-lg leading-2 text-black/80 uppercase font-bold w-full whitespace-nowrap overflow-hidden text-ellipsis'>{title}</p>
+            </CardHeader>
+            <Image
+              removeWrapper
+              alt='Relaxing app background'
+              className='z-0 w-full h-full object-cover'
+              src='https://img.freepik.com/vector-gratis/concepto-pagina-destino-proceso-diseno_52683-27124.jpg'
+            />
+            <CardFooter className='absolute bg-black/40 bottom-0 rounded-b-sm'>
+              <div className='flex flex-grow gap-2 items-center justify-end'>
+                <p className='text-sm text-black/80'>{surname}</p>
+              </div>
+            </CardFooter>
+
+          </Card>
         ))}
       </article>
     </>

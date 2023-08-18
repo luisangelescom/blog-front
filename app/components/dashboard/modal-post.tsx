@@ -11,6 +11,7 @@ import useStorePost from '@/app/store/dashboard'
 import { fetchClient } from '@/app/utils/fetchClient'
 import { Post } from '@/app/types/user'
 import { CloseIcon } from '../icons'
+import { actionRevalidateDashboard, actionRevalidatePosts } from '@/app/action-server/revalidate-server'
 
 function ModalPost (): JSX.Element {
   const { open, setClose, postId } = useOpenModalPost()
@@ -46,13 +47,14 @@ function ModalPost (): JSX.Element {
           setPost(posts !== null ? { ...posts, posts: response } : null)
           setClose()
           toast.success('Success in creating the post')
-          // revalidateTag('a')
-          // revalidatePath('/')
         })
         .catch((error) => {
           console.log('error')
           console.log(error)
-          toast.success('Error creating the post')
+          toast.error('Error creating the post')
+        }).finally(() => {
+          actionRevalidatePosts()
+          actionRevalidateDashboard()
         })
     } else {
       fetchClient<Post[]>(
@@ -71,7 +73,10 @@ function ModalPost (): JSX.Element {
         .catch((error) => {
           console.log('error')
           console.log(error)
-          toast.success('Error update the post')
+          toast.error('Error update the post')
+        }).finally(() => {
+          actionRevalidatePosts()
+          actionRevalidateDashboard()
         })
     }
   }
@@ -79,7 +84,7 @@ function ModalPost (): JSX.Element {
   return (
     <main
       onClick={setClose}
-      className={`fixed top-0 bottom-0 right-0 left-0 w-full z-10 bg-black/70 drop-shadow-md ${
+      className={`fixed top-0 bottom-0 right-0 left-0 w-full z-30 bg-black/70 drop-shadow-md ${
         open ? 'translate-x-0' : 'translate-x-full'
       } transition-all duration-500`}
     >

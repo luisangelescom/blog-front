@@ -2,11 +2,10 @@ import type { Metadata } from 'next'
 
 import { Inter, Roboto_Mono } from 'next/font/google'
 
-import ItemsHeaders from './components/items-header'
+import { Providers } from './provider'
+import HeaderServer from './components/header-server'
 
 import './globals.css'
-import { Providers } from './provider'
-
 // const inter = Inter({ subsets: ['latin'] })
 
 const inter = Inter({
@@ -31,7 +30,8 @@ export default function RootLayout ({ children }: { children: React.ReactNode })
     <html lang='en'>
       <body className={`${inter.variable} ${robotoMono.variable}`}>
         <header className='sticky top-0 border-b-2 border-white/20 bg-black/50 z-10 drop-shadow-sm h-16 flex gap-8 items-center justify-end container mx-auto px-2 sm:px-0'>
-          <ItemsHeaders />
+          {/* <ItemsHeaders /> */}
+          <HeaderServer />
         </header>
         <Providers>
           {children}

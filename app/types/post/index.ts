@@ -3,8 +3,8 @@ export interface UserPost {
 }
 
 export interface PostProps {
-  title: String
-  article: String
+  title: string
+  article: string
 }
 export interface PostType extends PostProps {
   id: number

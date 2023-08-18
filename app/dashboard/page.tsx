@@ -1,10 +1,13 @@
+import { FC } from 'react'
 import ContainerDashboard from '../components/dashboard/container'
+import { getPostUxWithCredential } from '../services/UX/postUx'
+import { UserPostData } from '../types/user'
 
-function DashboardPage (): JSX.Element {
+const DashboardPage: FC = async () => {
+  const data = await getPostUxWithCredential<UserPostData>('users/posts/all')
+
   return (
-  // <SWRConfig value={{ fallback: [], fallbackData: [] }}>
-    <ContainerDashboard />
-  // </SWRConfig>
+    <ContainerDashboard posts={data} />
   )
 }
 

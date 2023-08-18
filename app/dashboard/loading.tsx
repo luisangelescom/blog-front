@@ -1,8 +1,9 @@
+import LoadingPost from '../components/dashboard/loading-post'
 
 function Loading (): JSX.Element {
   return (
-    <main className='w-full h-[400px] flex justify-center items-center'>
-      <span>Loading</span>
+    <main className='container mx-auto px-5 sm:px-0 flex flex-col gap-5'>
+      <LoadingPost />
     </main>
   )
 }

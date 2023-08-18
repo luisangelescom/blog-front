@@ -2,7 +2,7 @@
 
 import useStoreLogin from '@/app/store/login'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 
 import useStorePost from '@/app/store/dashboard'
 
@@ -11,15 +11,24 @@ import ModalPost from './modal-post'
 import useOpenModalPost from '@/app/store/openModalPost'
 import { fetchClient } from '@/app/utils/fetchClient'
 import { UserPostData } from '@/app/types/user'
-import LoadingPost from './loading-post'
-import { toast } from 'sonner'
 
-function ContainerDashboard (): JSX.Element {
+interface Props {
+  posts: UserPostData
+}
+
+function ContainerDashboard ({ posts }: Props): JSX.Element {
+  console.log('data')
+  console.log(posts)
   const { token, deleteToken, preload, setLoading, loading: isLoading } = useStoreLogin()
-  const { posts, setPost, loading, setLoadingPost } = useStorePost()
+  const { setPost } = useStorePost()
   const { setOpen } = useOpenModalPost()
 
   const { replace } = useRouter()
+
+  useEffect(() => {
+    if (posts !== null) { setPost(posts) }
+  // eslint-disable-next-line
+  }, [posts])
 
   const deleteTokenServer = (): void => {
     setLoading(true)
@@ -36,39 +45,32 @@ function ContainerDashboard (): JSX.Element {
       })
   }
 
-  const getPost = useCallback(() => {
-    if (token.accessToken !== undefined && token.accessToken !== null) {
-      setLoadingPost(true)
-      fetchClient<UserPostData>(fetch('/api/user'))
-        .then((response) => {
-          setPost(response)
-        })
-        .catch((error: Error) => {
-          toast.error(error.message)
-        })
-        .finally(() => {
-          setLoadingPost(false)
-        })
-    }
-    // eslint-disable-next-line
-  }, [token]);
-
   useEffect(() => {
+    console.log('Token')
+    console.log({ token, preload })
     if (!preload) {
       if (token.accessToken === null) {
         replace('/login')
-      } else {
-        getPost()
       }
     }
     return () => {
-      setPost(null)
+      // setPost(null)
     }
     // eslint-disable-next-line
   }, [token, replace, preload]);
 
+  if (posts === null) {
+    return (
+      <div>
+        <span>Enter</span>
+        <span>Error chaval</span>
+      </div>
+    )
+  }
+
   return (
     <main className='container mx-auto px-5 sm:px-0 flex flex-col gap-5'>
+
       <section className='flex justify-end items-center px-2 h-16'>
         <button
           type='button'
@@ -99,7 +101,8 @@ function ContainerDashboard (): JSX.Element {
           Create Post
         </button>
       </section>
-      <section>{loading || isLoading ? <LoadingPost /> : <AllPost data={posts?.posts} />}</section>
+      <AllPost data={posts.posts} />
+      {/* <section>{loading || isLoading ? <LoadingPost /> : <AllPost data={posts?.posts} />}</section> */}
       <ModalPost />
     </main>
   )

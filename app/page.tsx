@@ -1,25 +1,21 @@
 import { FC } from 'react'
-// import Posts from './components/get-all-post'
-// import LoadingPost from './components/post/loading-post'
-// import { getPostUx } from './services/UX/postUx'
 import UXTest from './components/UX'
-import { SWRProvider } from './components/UX-provider'
+import { getPostUx } from './services/UX/postUx'
+import { PostType } from './types/post'
 
 export const dynamic = 'force-dynamic'
 
 const Home: FC = async () => {
-  // const data = await getPostUx()
+  const data = await getPostUx<PostType[]>('api/post')
   return (
 
-    <SWRProvider>
-      <main className='container mx-auto px-5 sm:px-0 flex flex-col gap-5'>
-        <section className='w-full flex justify-center items-center h-24'>
-          <span className='text-3xl font-semibold tracking-wider text-blue-300 font-sans'>What&apos;s New on the Blog</span>
-        </section>
-        <UXTest />
+    <main className='container mx-auto px-5 sm:px-0 flex flex-col gap-5'>
+      <section className='w-full flex justify-center items-center h-24'>
+        <span className='text-3xl font-semibold tracking-wider text-blue-300 font-sans'>What&apos;s New on the Blog</span>
+      </section>
+      <UXTest data={data} />
 
-      </main>
-    </SWRProvider>
+    </main>
 
   )
 }
