@@ -79,7 +79,7 @@ function Login (): JSX.Element {
   }
 
   return (
-    <main className='w-full h-full mx-auto container flex flex-col gap-4 p-5 justify-center items-center'>
+    <main className='w-full min-h-[calc(100vh-60px)] mx-auto container flex flex-col gap-4 p-5 justify-center items-center'>
       <Card className='max-w-full w-[340px] h-[480px]'>
         <CardBody className='overflow-hidden'>
           <Tabs
