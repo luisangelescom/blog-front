@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { fetchClient } from '@/app/utils/fetchClient'
 import { PostDescriptionType } from '@/app/types/post'
 import { useRouter } from 'next/navigation'
-import { actionRevalidatePostId } from '@/app/action-server/revalidate-server'
+import { revalidatePathCustom } from '@/app/action-server/revalidate-server'
 import useStore from '../hooks/useHookStore'
 import { useState } from 'react'
 import { Button } from '@nextui-org/react'
@@ -41,7 +41,7 @@ function AllDescription ({ postId, data }: Props): JSX.Element {
       .then(() => {
         // setDescription(response)
         refresh()
-        actionRevalidatePostId()
+        revalidatePathCustom('/post/[id]')
         toast.success('Success in creating the description')
         reset()
       })

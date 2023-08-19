@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation'
 import { fetchClient } from '../utils/fetchClient'
 import { TokenData } from '../types/login'
 import { Button, Card, CardBody, Input, Link, Tab, Tabs } from '@nextui-org/react'
-import { actionRevalidateDashboard } from '../action-server/revalidate-server'
 
 interface InputProps {
   name?: string
@@ -52,7 +51,6 @@ function Login (): JSX.Element {
         .then((response) => {
           toast.success('Bienvenido.')
           replace('/dashboard')
-          actionRevalidateDashboard()
           setToken(response)
         })
         .catch(() => {
