@@ -28,8 +28,6 @@ function ContainerDashboard ({ posts }: Props): JSX.Element {
   }, [posts])
 
   useEffect(() => {
-    console.log('Token')
-    console.log({ token, preload })
     if (!preload) {
       if (token.accessToken === null) {
         replace('/login')
