@@ -31,9 +31,9 @@ function UXTest ({ data }: Props): JSX.Element {
               className='z-0 w-full h-full object-cover'
               src='https://img.freepik.com/vector-gratis/concepto-pagina-destino-proceso-diseno_52683-27124.jpg'
             />
-            <CardFooter className='absolute bg-black/40 bottom-0 rounded-b-sm'>
+            <CardFooter className='absolute bg-white/20 dark:bg-black/40 bottom-0 rounded-b-sm'>
               <div className='flex flex-grow gap-2 items-center justify-end'>
-                <p className='text-sm text-black/80'>{surname}</p>
+                <p className='text-sm text-black/80 dark:text-white/80'>{surname}</p>
               </div>
             </CardFooter>
 

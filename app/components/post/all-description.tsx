@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import { actionRevalidatePostId } from '@/app/action-server/revalidate-server'
 import useStore from '../hooks/useHookStore'
 import { useState } from 'react'
+import { Button } from '@nextui-org/react'
 
 interface Props {
   postId: string
@@ -63,8 +64,8 @@ function AllDescription ({ postId, data }: Props): JSX.Element {
           <div className='flex flex-col w-full gap-1'>
             <textarea
               placeholder='Description'
-              className={`w-full max-h-[400px] min-h-[100px] p-2 bg-black/20 border-2 ${
-                token?.token.accessToken === null || isLoading ? 'border-white/20 resize-none' : ''
+              className={`w-full max-h-[400px] min-h-[100px] p-2 bg-white/10 dark:bg-black/20 border-2 ${
+                token?.token.accessToken === null || isLoading ? 'border-black/20 dark:border-white/20 resize-none' : ''
               } rounded-md`}
               maxLength={255}
               disabled={token?.token.accessToken === null || isLoading}
@@ -75,7 +76,7 @@ function AllDescription ({ postId, data }: Props): JSX.Element {
             )}
           </div>
           <div className='flex justify-end w-full'>
-            <button
+            {/* <button
               type='submit'
               className={`border-2 border-white/50 ${
                  token?.token.accessToken === null || isLoading ? ' opacity-50' : 'hover:border-blue-400 hover:text-blue-400'
@@ -83,22 +84,29 @@ function AllDescription ({ postId, data }: Props): JSX.Element {
               disabled={token?.token.accessToken === null || isLoading}
             >
               Save
-            </button>
+            </button> */}
+            <Button
+              type='submit'
+              color={token?.token.accessToken === null || isLoading ? 'default' : 'primary'}
+              disabled={token?.token.accessToken === null || isLoading}
+            >
+              Save
+            </Button>
           </div>
         </form>
       </div>
       {data.map(({ id, description, user: { surname } }) => (
         <div
           key={id}
-          className='border-2 border-white/20 flex flex-col md:flex-row gap-7 md:gap-0 w-full rounded-md min-h-[100px] p-2'
+          className='border-2 dark:border-white/20 flex flex-col md:flex-row gap-7 md:gap-0 w-full rounded-md min-h-[100px] p-2'
         >
           <div className='w-[200px] flex flex-col'>
-            <span className='text-sm font-mono'>Autor</span>
-            <span className='px-2 font-sans font-semibold text-lg text-white/80'>{surname}</span>
+            <span className='text-sm font-mono text-black/90 dark:text-white/90'>Autor</span>
+            <span className='px-2 font-sans font-semibold text-lg text-black/90 dark:text-white/90'>{surname}</span>
           </div>
           <div className='flex flex-col grow'>
-            <span className='text-sm font-mono'>Description</span>
-            <span className='px-2 font-sans font-semibold text-lg text-white/90'>{description}</span>
+            <span className='text-sm font-mono text-black/90 dark:text-white/90'>Description</span>
+            <span className='px-2 font-sans font-semibold text-lg text-black/90 dark:text-white/90'>{description}</span>
           </div>
         </div>
       ))}

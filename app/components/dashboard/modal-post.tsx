@@ -92,7 +92,7 @@ function ModalPost (): JSX.Element {
     <Modal backdrop='blur' size='md' isOpen={open} onClose={setClose} placement='center'>
       <ModalContent>
         <ModalHeader className='flex flex-col gap-1'>
-          <span className='text-black dark:text-white text-2xl leading-6 tracking-wide'>
+          <span className='text-black text-2xl leading-6 tracking-wide'>
             {postId === undefined ? 'Create Post' : 'Edit Post'}
           </span>
         </ModalHeader>
@@ -113,10 +113,7 @@ function ModalPost (): JSX.Element {
                   control={control}
                   rules={{ required: true }}
                   defaultValue=''
-                  render={({ field }) => {
-                    console.log({ field })
-                    return <Input type='text' label='Title' className='text-black dark:text-white' {...field} />
-                  }}
+                  render={({ field }) => <Input type='text' label='Title' className='text-black' {...field} />}
                 />
 
                 {errors.title?.type === 'required' && <span className='text-sm text-red-500'>Name is required</span>}
@@ -132,7 +129,7 @@ function ModalPost (): JSX.Element {
                       label='Description'
                       labelPlacement='outside'
                       placeholder='Enter your description'
-                      className='max-h-[300px] min-h-[100px] text-black dark:text-white'
+                      className='max-h-[300px] min-h-[100px] text-black'
                       maxLength={255} {...field}
                     />}
                 />
@@ -140,14 +137,6 @@ function ModalPost (): JSX.Element {
                   <span className='text-sm text-red-500'>Lastname is required</span>
                 )}
               </div>
-            </div>
-            <div className='w-full flex justify-center items-center'>
-              <button
-                type='submit'
-                className='border-2 border-white/50 rounded-lg py-3 px-6 text-md hover:text-blue-500 '
-              >
-                {postId === undefined ? 'Save' : 'Edit'}
-              </button>
             </div>
             <ModalFooter>
               <Button color='danger' variant='light' onClick={setClose} disabled={isLoading}>

@@ -17,8 +17,6 @@ interface Props {
 }
 
 function ContainerDashboard ({ posts }: Props): JSX.Element {
-  console.log('data')
-  console.log(posts)
   const { token, deleteToken, preload, setLoading, loading: isLoading } = useStoreLogin()
   const { setPost } = useStorePost()
   const { setOpen } = useOpenModalPost()

@@ -46,13 +46,13 @@ function HeaderPost ({ postId, post }: Props): JSX.Element {
           </button>
         </div>
       )}
-      <section className='w-full flex flex-col border-b-2 border-white/10'>
+      <section className='w-full flex flex-col border-b-2 border-black/10 dark:border-white/10'>
         <article className='w-full h-28 flex justify-start items-center'>
           <span className='text-4xl text-blue-400 font-sans font-medium tracking-wider'>{post.title}</span>
         </article>
 
         <article className='w-full h-28 flex justify-start items-center'>
-          <span className='text-2xl text-[#EEEEEE] font-sans font-medium tracking-wider'>{post.article}</span>
+          <span className='text-2xl text-black/80 dark:text-[#EEEEEE] font-sans font-medium tracking-wider'>{post.article}</span>
         </article>
       </section>
     </div>
