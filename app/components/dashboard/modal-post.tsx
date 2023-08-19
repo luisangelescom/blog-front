@@ -50,6 +50,8 @@ function ModalPost (): JSX.Element {
           setPost(posts !== null ? { ...posts, posts: response } : null)
           setClose()
           toast.success('Success in creating the post')
+          actionRevalidatePosts()
+          actionRevalidateDashboard()
         })
         .catch((error) => {
           console.log('error')
@@ -57,8 +59,6 @@ function ModalPost (): JSX.Element {
           toast.error('Error creating the post')
         })
         .finally(() => {
-          actionRevalidatePosts()
-          actionRevalidateDashboard()
           onLoading(false)
         })
     } else {
@@ -72,6 +72,8 @@ function ModalPost (): JSX.Element {
           setPost(posts !== null ? { ...posts, posts: response } : null)
           setClose()
           toast.success('Success in update the post')
+          actionRevalidatePosts()
+          actionRevalidateDashboard()
           // revalidateTag('a')
           // revalidatePath('/')
         })
@@ -81,8 +83,6 @@ function ModalPost (): JSX.Element {
           toast.error('Error update the post')
         })
         .finally(() => {
-          actionRevalidatePosts()
-          actionRevalidateDashboard()
           onLoading(false)
         })
     }
