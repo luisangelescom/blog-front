@@ -30,8 +30,7 @@ export default function GlobalError ({ error, reset }: { error: Error, reset: ()
         onClick={
           // Attempt to recover by trying to re-render the segment
           () => {
-            // reset()
-            throw new Error('Ejecutado el error chaval')
+            reset()
 
             // router.refresh()
           }

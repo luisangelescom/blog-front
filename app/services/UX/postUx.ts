@@ -3,7 +3,7 @@ import { getToken } from '@/app/utils/fetcher'
 import { cookies } from 'next/headers'
 
 export async function getPostUx<T> (path: string): Promise<T> {
-  const res = await fetch(`${UrlFrontend}/${path}`, { cache: 'force-cache' })
+  const res = await fetch(`${UrlFrontend}/${path}`, { next: { revalidate: 36000 } })
   if (!res.ok) {
     if (res.status === 404) {
       return [] as T
@@ -23,7 +23,7 @@ export async function getPostUxWithCredential<T> (path: string): Promise<T> {
   // })
   try {
     const res = await fetch(`${UrlBackend}/${path}`, {
-      cache: 'force-cache',
+      next: { revalidate: 36000 },
       headers: {
         Authorization: `Bearer ${getToken() ?? ''}`
       }
