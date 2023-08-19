@@ -1,7 +1,7 @@
 
 function LoadingPost (): JSX.Element {
   return (
-    <>
+    <main className='container mx-auto px-5 sm:px-0 flex flex-col gap-5'>
       <section className='flex justify-end items-center px-2 h-16'>
         <div className='animate-pulse w-20 h-8 bg-black/10 dark:bg-white/50 rounded' />
       </section>
@@ -9,7 +9,7 @@ function LoadingPost (): JSX.Element {
         <div className='animate-pulse w-full sm:w-96 h-8 bg-black/10 dark:bg-white/50 rounded' />
       </section>
 
-      <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5'>
+      <section className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5'>
         {[...Array(4).keys()].map((id) =>
           <section className='relative' key={id}>
             <button
@@ -32,8 +32,8 @@ function LoadingPost (): JSX.Element {
             </div>
           </section>
         )}
-      </div>
-    </>
+      </section>
+    </main>
   )
 }
 

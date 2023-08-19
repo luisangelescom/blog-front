@@ -3,19 +3,19 @@
 import useStoreLogin from '@/app/store/login'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import useSWR from 'swr'
 
 import useStorePost from '@/app/store/dashboard'
+import useOpenModalPost from '@/app/store/openModalPost'
+import { UserPostData } from '@/app/types/user'
+import Loading from './loading-post'
 
 import AllPost from './all-post'
 import ModalPost from './modal-post'
-import useOpenModalPost from '@/app/store/openModalPost'
-import { UserPostData } from '@/app/types/user'
+import { fetchSWR } from '@/app/utils/fetchClient'
 
-interface Props {
-  posts: UserPostData
-}
-
-function ContainerDashboard ({ posts }: Props): JSX.Element {
+function ContainerDashboard (): JSX.Element {
+  const { data, isLoading: isLoadingSWR, isValidating } = useSWR('/api/user', fetchSWR<UserPostData>)
   const { token, preload, loading: isLoading } = useStoreLogin()
   const { setPost } = useStorePost()
   const { setOpen } = useOpenModalPost()
@@ -23,9 +23,12 @@ function ContainerDashboard ({ posts }: Props): JSX.Element {
   const { replace } = useRouter()
 
   useEffect(() => {
-    if (posts !== null) { setPost(posts) }
+    console.log(data)
+    if (data !== null && data !== undefined) {
+      setPost(data)
+    }
   // eslint-disable-next-line
-  }, [posts])
+  }, [data])
 
   useEffect(() => {
     if (!preload) {
@@ -34,12 +37,16 @@ function ContainerDashboard ({ posts }: Props): JSX.Element {
       }
     }
     return () => {
-      // setPost(null)
+      setPost(null)
     }
     // eslint-disable-next-line
   }, [token, replace, preload]);
 
-  if (posts === null) {
+  if (isLoadingSWR || isValidating) {
+    return <Loading />
+  }
+
+  if (data === null || data === undefined) {
     return (
       <div>
         <span>Enter</span>
@@ -66,7 +73,7 @@ function ContainerDashboard ({ posts }: Props): JSX.Element {
           Create Post
         </button>
       </section>
-      <AllPost data={posts.posts} />
+      <AllPost data={data.posts} />
       {/* <section>{loading || isLoading ? <LoadingPost /> : <AllPost data={posts?.posts} />}</section> */}
       <ModalPost />
     </main>

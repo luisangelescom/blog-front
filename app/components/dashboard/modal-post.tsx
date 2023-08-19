@@ -10,10 +10,12 @@ import useStorePost from '@/app/store/dashboard'
 
 import { fetchClient } from '@/app/utils/fetchClient'
 import { Post } from '@/app/types/user'
-import { actionRevalidateDashboard, actionRevalidatePosts } from '@/app/action-server/revalidate-server'
+import { revalidatePathCustom } from '@/app/action-server/revalidate-server'
 import { Button, Divider, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from '@nextui-org/react'
+import { useSWRConfig } from 'swr'
 
 function ModalPost (): JSX.Element {
+  const { mutate } = useSWRConfig()
   const { open, setClose, postId } = useOpenModalPost()
   const { setPost, posts } = useStorePost()
   const [isLoading, onLoading] = useState<boolean>(false)
@@ -46,12 +48,13 @@ function ModalPost (): JSX.Element {
           body: JSON.stringify(data)
         })
       )
-        .then((response) => {
+        .then(async (response) => {
           setPost(posts !== null ? { ...posts, posts: response } : null)
           setClose()
           toast.success('Success in creating the post')
-          actionRevalidatePosts()
-          actionRevalidateDashboard()
+          revalidatePathCustom('/')
+          revalidatePathCustom('/post/[id]')
+          await mutate('/api/user')
         })
         .catch((error) => {
           console.log('error')
@@ -68,12 +71,13 @@ function ModalPost (): JSX.Element {
           body: JSON.stringify(data)
         })
       )
-        .then((response) => {
+        .then(async (response) => {
           setPost(posts !== null ? { ...posts, posts: response } : null)
           setClose()
           toast.success('Success in update the post')
-          actionRevalidatePosts()
-          actionRevalidateDashboard()
+          revalidatePathCustom('/')
+          revalidatePathCustom('/post/[id]')
+          await mutate('/api/user')
           // revalidateTag('a')
           // revalidatePath('/')
         })
