@@ -1,20 +1,27 @@
 'use client'
 
 import Link from 'next/link'
-import { HomeIcon, LoadingIcon, PersonIcon } from './icons'
+import { HomeIcon } from './icons'
 import useStoreLogin from '../store/login'
 import { useEffect } from 'react'
 import { TokenData } from '../types/login'
-import { Button } from '@nextui-org/react'
+import {
+  Avatar,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger
+} from '@nextui-org/react'
 // import { actionRevalidateDashboard } from '../action-server/revalidate-server'
 import { useRouter } from 'next/navigation'
+import { fetchClient } from '../utils/fetchClient'
 
 interface Props {
   data: TokenData | null
 }
 
 function ItemsHeaders ({ data }: Props): JSX.Element {
-  const { token, preload, setPreload, setToken, loading, deleteToken } = useStoreLogin()
+  const { token, preload, setPreload, setToken, loading, setLoading, deleteToken } = useStoreLogin()
   const { push } = useRouter()
 
   // const getToken = useCallback(() => {
@@ -38,8 +45,23 @@ function ItemsHeaders ({ data }: Props): JSX.Element {
       deleteToken()
     }
     setPreload()
-  // eslint-disable-next-line
-  }, [data])
+    // eslint-disable-next-line
+  }, [data]);
+
+  const deleteTokenServer = (): void => {
+    setLoading(true)
+    fetchClient(
+      fetch('/api/login', {
+        method: 'DELETE'
+      })
+    )
+      .then(() => {
+        deleteToken()
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
 
   return (
     <div className='flex items-center gap-4'>
@@ -53,32 +75,57 @@ function ItemsHeaders ({ data }: Props): JSX.Element {
         }}
       >Render
       </Button> */}
-      {token.accessToken === null || token.accessToken === undefined || loading
-        ? (
-          <Link href='/login' title='login'>
-            {preload || loading
-              ? (
-                <div title='Loading User'>
-                  <LoadingIcon />
-                </div>
-                )
-              : (
-                <PersonIcon />
-                )}
-          </Link>
-          )
-        : (
-          <Button
+
+      <Dropdown placement='bottom-end'>
+
+        <DropdownTrigger>
+          <Avatar
+            isBordered
+            as='button'
+            className='transition-transform'
             color='primary'
-            type='button'
-            size='md'
-            onPress={() => {
-              push('/dashboard')
-            }}
-          >
-            Dashboard
-          </Button>
-          )}
+            name='Jason Hughes'
+            size='sm'
+            src={token.accessToken === null || token.accessToken === undefined || loading || preload ? 'https://img.freepik.com/free-icon/user_318-159711.jpg' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
+          />
+        </DropdownTrigger>
+        {token.accessToken === null || token.accessToken === undefined || loading || preload
+          ? (
+            <DropdownMenu aria-label='Profile Actions' variant='shadow'>
+              <DropdownItem
+                key='login'
+                className='text-black'
+                onPress={() => {
+                  push('/login')
+                }}
+              >
+                Login
+              </DropdownItem>
+            </DropdownMenu>
+            )
+          : (
+            <DropdownMenu aria-label='Profile Actions' variant='shadow'>
+
+              <DropdownItem
+                key='dashboard'
+                className='text-black'
+                onPress={() => {
+                  push('/dashboard')
+                }}
+              >
+                Dashboard
+              </DropdownItem>
+              <DropdownItem
+                key='logout' color='danger' className='text-black' onPress={() => {
+                  deleteTokenServer()
+                }}
+              >
+                Log Out
+              </DropdownItem>
+            </DropdownMenu>
+
+            )}
+      </Dropdown>
     </div>
   )
 }
