@@ -15,7 +15,7 @@ import ModalPost from './modal-post'
 import { fetchSWR } from '@/app/utils/fetchClient'
 
 function ContainerDashboard (): JSX.Element {
-  const { data, isLoading: isLoadingSWR, isValidating } = useSWR('/api/user', fetchSWR<UserPostData>)
+  const { data, isLoading: isLoadingSWR } = useSWR('/api/user', fetchSWR<UserPostData>)
   const { token, preload, loading: isLoading } = useStoreLogin()
   const { setPost } = useStorePost()
   const { setOpen } = useOpenModalPost()
@@ -42,7 +42,7 @@ function ContainerDashboard (): JSX.Element {
     // eslint-disable-next-line
   }, [token, replace, preload]);
 
-  if (isLoadingSWR || isValidating) {
+  if (isLoadingSWR) {
     return <Loading />
   }
 
