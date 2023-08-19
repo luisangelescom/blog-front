@@ -24,7 +24,6 @@ export async function getPostUxWithCredential<T> (path: string): Promise<T> {
   try {
     const res = await fetch(`${UrlBackend}/${path}`, {
       cache: 'force-cache',
-      next: { revalidate: 3600 },
       headers: {
         Authorization: `Bearer ${getToken() ?? ''}`
       }

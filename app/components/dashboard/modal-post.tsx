@@ -89,19 +89,19 @@ function ModalPost (): JSX.Element {
   }
 
   return (
-    <Modal backdrop='blur' size='md' isOpen={open} onClose={setClose} placement='center'>
+    <Modal backdrop='blur' size='md' isOpen={open} onClose={setClose} placement='center' scrollBehavior='outside'>
       <ModalContent>
-        <ModalHeader className='flex flex-col gap-1'>
+        <ModalHeader className='w-full flex flex-col gap-1'>
           <span className='text-black text-2xl leading-6 tracking-wide'>
             {postId === undefined ? 'Create Post' : 'Edit Post'}
           </span>
         </ModalHeader>
-        <Divider className='my-10 px-10' />
-        <ModalBody>
+        <Divider className='my-5' />
+        <ModalBody className='px-2 sm:px-4'>
           <form
             // eslint-disable-next-line
             onSubmit={handleSubmit(onSubmit)}
-            className='h-full border-2 border-white/40 rounded-lg gap-5 w-full flex flex-col justify-center items-center p-6'
+            className='w-full h-full border-2 border-white/40 rounded-lg gap-5 flex flex-col justify-center items-center'
           >
             <span className='text-2xl font-sans font-bold tracking-tight'>
               {postId === undefined ? 'Create Post' : 'Edit Post'}
