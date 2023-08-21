@@ -23,7 +23,6 @@ function ContainerDashboard (): JSX.Element {
   const { replace } = useRouter()
 
   useEffect(() => {
-    console.log(data)
     if (data !== null && data !== undefined) {
       setPost(data)
     }
