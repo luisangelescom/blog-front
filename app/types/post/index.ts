@@ -23,6 +23,6 @@ export interface PostLike {
 }
 
 export interface PostLikeType {
-  data: PostLike[]
-  count: Number
+  rows: PostLike[]
+  count: number
 }

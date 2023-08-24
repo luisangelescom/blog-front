@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 export async function getPostUx<T> (path: string): Promise<T> {
   const res = await fetch(`${UrlFrontend}/${path}`, { next: { revalidate: 36000 } })
   if (!res.ok) {
+    console.log(res.status)
     if (res.status === 404) {
       return [] as T
     }
