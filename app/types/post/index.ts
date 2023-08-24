@@ -8,7 +8,7 @@ export interface PostProps {
 }
 export interface PostType extends PostProps {
   id: number
-  user: UserPost
+  user?: UserPost
 }
 
 export interface PostDescriptionType {

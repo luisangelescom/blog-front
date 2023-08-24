@@ -16,7 +16,7 @@ function UXTest ({ data }: Props): JSX.Element {
     <>
 
       <article className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5'>
-        {data.map(({ id, title, article, user: { surname } }) => (
+        {data.map(({ id, title, article, user }) => (
           <Card
             key={id} isPressable onClick={() => {
               push(`/post/${id}`)
@@ -33,7 +33,7 @@ function UXTest ({ data }: Props): JSX.Element {
             />
             <CardFooter className='absolute bg-white/20 dark:bg-black/40 bottom-0 rounded-b-sm'>
               <div className='flex flex-grow gap-2 items-center justify-end'>
-                <p className='text-sm text-black/80 dark:text-white/80'>{surname}</p>
+                <p className='text-sm text-black/80 dark:text-white/80'>{user?.surname ?? 'anónimo'}</p>
               </div>
             </CardFooter>
 

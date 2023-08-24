@@ -24,7 +24,7 @@ function AllPost ({ data }: Props): JSX.Element {
       )}
 
       <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-5'>
-        {data?.map(({ id, title, article, user: { surname } }) => (
+        {data?.map(({ id, title, article, user: { surname } = { surname: 'anónimo' } }) => (
           <div key={id} className='w-full h-full relative'>
             <Button
               title='Edit'

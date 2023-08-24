@@ -57,7 +57,7 @@ const Posts: FC<Props> = ({ data }) => {
         </div>
       )}
       <article className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5'>
-        {data.map(({ id, title, article, user: { surname } }) => (
+        {data.map(({ id, title, article, user }) => (
           <Link
             href={`/post/${id}`}
             key={id}
@@ -70,7 +70,7 @@ const Posts: FC<Props> = ({ data }) => {
               <span className='text-md text-[#EEEEEE]'>{article}</span>
             </div>
             <div className='w-full h-1/4 flex justify-end items-end'>
-              <span className='text-sm font-sans font-semibold text-[#EEEEEE] tracking-wider'>{surname}</span>
+              <span className='text-sm font-sans font-semibold text-[#EEEEEE] tracking-wider'>{user?.surname ?? 'anómico'}</span>
             </div>
           </Link>
         ))}
