@@ -8,8 +8,6 @@ const PostId: FC<{ params: { id: string } }> = async ({ params }) => {
   const data = await getPostUx<PostDescriptionType[]>(`/api/description/${params.id}`)
   const post = await getPostUx<PostProps>(`/api/post/${params.id}`)
   const likes = await getPostUx<PostLikeType>(`/api/post/${params.id}/likes`)
-  console.log('likes')
-  console.log(likes)
   return (
     <main className='container mx-auto w-full h-full flex flex-col gap-5 py-5 px-5 sm:px-0'>
       <HeaderPost post={post} likes={likes} postId={params.id} />
