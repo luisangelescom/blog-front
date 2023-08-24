@@ -70,7 +70,7 @@ const Posts: FC<Props> = ({ data }) => {
               <span className='text-md text-[#EEEEEE]'>{article}</span>
             </div>
             <div className='w-full h-1/4 flex justify-end items-end'>
-              <span className='text-sm font-sans font-semibold text-[#EEEEEE] tracking-wider'>{user?.surname ?? 'anómico'}</span>
+              <span className='text-sm font-sans font-semibold text-[#EEEEEE] tracking-wider'>{user?.surname ?? 'anónimo'}</span>
             </div>
           </Link>
         ))}
