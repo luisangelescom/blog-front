@@ -1,5 +1,6 @@
 'use client' // Error components must be Client Components
 
+import { Button } from '@nextui-org/react'
 import { useEffect } from 'react'
 // import { deleteCookie } from './utils/cookies-custom'
 
@@ -14,9 +15,12 @@ export default function GlobalError ({ error, reset }: { error: Error, reset: ()
   }, [error])
 
   return (
-    <main className='container mx-auto px-0 flex flex-col gap-5'>
-      <h2>Ooops... Parece que algo salio mal.</h2>
-      <button
+    <main className='container mx-auto border-2 w-full min-h-[calc(100vh-75px)] flex flex-col justify-center items-center'>
+      <h2 className='text-2xl'>Ooops... Parece que algo salio mal.</h2>
+      <Button
+        type='button'
+        variant='shadow'
+        color='danger'
         onClick={
           // Attempt to recover by trying to re-render the segment
           () => {
@@ -24,8 +28,9 @@ export default function GlobalError ({ error, reset }: { error: Error, reset: ()
             // router.refresh()
           }
         }
-      >Refresh
-      </button>
+      >
+        Refresh
+      </Button>
     </main>
   )
 }

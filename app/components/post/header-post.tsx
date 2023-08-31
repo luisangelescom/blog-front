@@ -42,7 +42,8 @@ function HeaderPost ({ postId, post, likes }: Props): JSX.Element {
             <div className='px-1 py-2'>
               {likes.rows.map(({ id, user }) => (
                 <div key={id} className='text-small font-bold text-black'>
-                  {user.surname}
+                  {user?.surname ?? 'anónimo'}
+                  {/* {user?.surname ?? 'anónimo'} */}
                 </div>
               ))}
               {likes.count === 0 && <div className='text-small font-bold text-black'>No comments yet</div>}
@@ -62,9 +63,9 @@ function HeaderPost ({ postId, post, likes }: Props): JSX.Element {
           >
             <HeartIcon
               className={`hover:fill-red-400 ${
-                likes.rows.some(({ user }) => user.surname === token?.token.data?.surname) ? 'fill-red-500' : ''
+                likes.rows.some(({ user }) => user?.surname === token?.token.data?.surname) ? 'fill-red-500' : ''
               }`}
-              select={likes.rows.some(({ user }) => user.surname === token?.token.data?.surname)}
+              select={likes.rows.some(({ user }) => user?.surname === token?.token.data?.surname)}
             />
           </Button>
         </Tooltip>
