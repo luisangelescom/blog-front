@@ -3,7 +3,7 @@ import { getToken } from '@/app/utils/fetcher'
 import { cookies } from 'next/headers'
 
 export async function getPostUx<T> (path: string): Promise<T> {
-  const res = await fetch(`${UrlFrontend}/${path}`, { next: { revalidate: 36000 } })
+  const res = await fetch(`${UrlFrontend}/${path}`, { cache: 'force-cache' })
   if (!res.ok) {
     console.log(res.status)
     if (res.status === 404) {
