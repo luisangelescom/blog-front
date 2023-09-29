@@ -5,8 +5,10 @@ import { PostDescriptionType, PostProps } from '@/app/types/post'
 import { FC } from 'react'
 
 const PostId: FC<{ params: { id: string } }> = async ({ params }) => {
-  const data = await getPostUx<PostDescriptionType[]>(`/api/description/${params.id}`)
-  const post = await getPostUx<PostProps>(`/api/post/${params.id}`)
+  const dataParallel = getPostUx<PostDescriptionType[]>(`/api/description/${params.id}`)
+  const postParallel = getPostUx<PostProps>(`/api/post/${params.id}`)
+
+  const [data, post] = await Promise.all([dataParallel, postParallel])
   // const likes = await getPostUx<PostLikeType>(`/api/post/${params.id}/likes`)
   return (
     <main className='container mx-auto w-full h-full flex flex-col gap-5 py-5 px-5 sm:px-0'>
