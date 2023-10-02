@@ -1,16 +1,17 @@
 import { fetchLazy } from '@/app/hook/lazy-api'
+import { UrlFrontend } from '@/app/public-env'
 
 // const cache = new Map()
 interface Data {
   id: number
   title: string
-  completed: boolean
+  user?: { surname: string }
 }
 
 const getPromise = async (): Promise<Data[]> => {
-  return await fetch('https://jsonplaceholder.typicode.com/todos', {
+  return await fetch(`${UrlFrontend}api/post`, {
     cache: 'force-cache',
-    next: { revalidate: 10 }
+    next: { revalidate: 5 }
   }).then(async (r) => await r.json())
 }
 
@@ -29,7 +30,7 @@ function TestRender (): JSX.Element {
         {data.map((d) => (
           <div key={d.id} className='border-2 flex justify-between items-center'>
             <span className='text-2xl'>{`${d.title}`}</span>
-            <input type='checkbox' defaultChecked={d.completed} readOnly checked={d.completed} />
+            <span className='text-2xl'>{`${d.user?.surname ?? 'Anónimo'}`}</span>
           </div>
         ))}
       </div>
